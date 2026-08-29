@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Generador de Menú - Cooperativa Escolar</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --color-lunes: #ffaa5b;
+      --color-martes: #8ce667;
+      --color-miercoles: #fdf063;
+      --color-jueves: #ff85cb;
+      --color-viernes: #6ee3fb;
+      --color-magenta: #e6007e;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    /* Panel de controles */
+    .controls {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 400px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .controls h2 {
+      margin-top: 0;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .section-title {
+      font-weight: bold;
+      color: var(--color-magenta);
+      margin: 15px 0 8px 0;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 4px;
+    }
+
+    .day-group-title {
+      font-weight: bold;
+      font-size: 13px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      margin: 10px 0 6px 0;
+    }
+
+    .title-lunes { background-color: #ffe5cc; color: #d96b00; }
+    .title-martes { background-color: #e2f8d8; color: #3b821e; }
+    .title-miercoles { background-color: #fffde0; color: #8a8000; }
+    .title-jueves { background-color: #ffe0f3; color: #b81478; }
+    .title-viernes { background-color: #e0f8fe; color: #007799; }
+
+    .form-group {
+      margin-bottom: 8px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 2px;
+      color: #555;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 13px;
+    }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 5px;
+    }
+
+    .item-row input[type="text"] {
+      flex: 1;
+    }
+
+    button {
+      width: 100%;
+      background-color: var(--color-magenta);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    button:hover {
+      background-color: #c2185b;
+    }
+
+    .btn-add {
+      background-color: #2196F3;
+      padding: 6px;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    /* Plantilla para renderizar el Menú */
+    .canvas-container {
+      background: white;
+      width: 595px;
+      min-height: 842px;
+      padding: 30px;
+      box-sizing: border-box;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Encabezado */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .institution-info {
+      color: var(--color-magenta);
+      font-weight: bold;
+      line-height: 1.1;
+    }
+
+    .inst-line1 { font-size: 20px; }
+    .inst-line2 { font-size: 22px; }
+
+    .date-box {
+      text-align: right;
+      font-size: 12px;
+      font-weight: bold;
+      color: #222;
+    }
+
+    .date-box .subtitle {
+      color: var(--color-magenta);
+      font-size: 10px;
+    }
+
+    .main-title {
+      text-align: center;
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #111;
+      margin: 15px 0 20px 0;
+      font-family: 'Arial Black', sans-serif;
+    }
+
+    /* Layout principal de 2 columnas */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .left-column, .right-column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Estilo de Tarjetas/Cajas */
+    .menu-card {
+      border: 2px solid;
+      border-radius: 20px;
+      padding: 10px 15px;
+      background: #fff;
+    }
+
+    .card-title {
+      text-align: center;
+      font-weight: bold;
+      font-size: 15px;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .menu-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 10px;
+      font-weight: bold;
+      color: #222;
+    }
+
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .menu-item .dots {
+      flex: 1;
+      border-bottom: 1px dashed #999;
+      margin: 0 4px 3px 4px;
+    }
+
+    /* Colores especificos de bordes */
+    .card-lunes { border-color: var(--color-lunes); }
+    .card-martes { border-color: var(--color-martes); }
+    .card-miercoles { border-color: var(--color-miercoles); }
+    .card-jueves { border-color: var(--color-jueves); }
+    .card-viernes { border-color: var(--color-viernes); }
+    .card-magenta { border-color: var(--color-magenta); }
+
+    /* Estilos específicos columna derecha */
+    .guisado-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    /* Texto ajustado abajo de los guisados */
+    .footer-text {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #111;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 1024px) {
+      body { flex-direction: column; align-items: center; }
+      .controls { width: 100%; max-width: 500px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PANEL DE CONTROL -->
+  <div class="controls">
+    <h2>Configuración del Menú</h2>
+    
+    <div class="section-title">Encabezado</div>
+    <div class="form-group">
+      <label>Título L1 (ej. Primaria):</label>
+      <input type="text" id="in-linea1" value="Primaria" oninput="actualizar()">
+    </div>
+    <div class="form-group">
+      <label>Título L2 (ej. Niños Héroes):</label>
+      <input type="text" id="in-linea2" value="Niños Héroes" oninput="actualizar()">
+    </div>
+    <div class="form-group">
+      <label>Rango de Fechas:</label>
+      <input type="text" id="in-semana" value="31 DE AGOSTO AL 4 DE SEPTIEMBRE" oninput="actualizar()">
+    </div>
+
+    <div class="section-title">Comidas por Día (4 Platillos + 1 Bebida)</div>
+    
+    <!-- LUNES -->
+    <div class="day-group-title title-lunes">LUNES</div>
+    <div id="inputs-lunes"></div>
+
+    <!-- MARTES -->
+    <div class="day-group-title title-martes">MARTES</div>
+    <div id="inputs-martes"></div>
+
+    <!-- MIÉRCOLES -->
+    <div class="day-group-title title-miercoles">MIÉRCOLES</div>
+    <div id="inputs-miercoles"></div>
+
+    <!-- JUEVES -->
+    <div class="day-group-title title-jueves">JUEVES</div>
+    <div id="inputs-jueves"></div>
+
+    <!-- VIERNES -->
+    <div class="day-group-title title-viernes">VIERNES</div>
+    <div id="inputs-viernes"></div>
+
+    <div class="section-title">Guisados del Día</div>
+    <div class="form-group"><label>Lunes:</label><input type="text" id="in-g-lunes" value="PICADILLO" oninput="actualizar()"></div>
+    <div class="form-group"><label>Martes:</label><input type="text" id="in-g-martes" value="TACOS DE PAPA" oninput="actualizar()"></div>
+    <div class="form-group"><label>Miércoles:</label><input type="text" id="in-g-miercoles" value="POLLO AL CHIPOTLE" oninput="actualizar()"></div>
+    <div class="form-group"><label>Jueves:</label><input type="text" id="in-g-jueves" value="ALBÓNDIGAS" oninput="actualizar()"></div>
+    <div class="form-group"><label>Viernes:</label><input type="text" id="in-g-viernes" value="TACOS DE CARNE ASADA" oninput="actualizar()"></div>
+
+    <div class="section-title">Sección "Diariamente"</div>
+    <div id="diariamente-inputs"></div>
+    <button type="button" class="btn-add" onclick="agregarItemDiario()">+ Agregar Producto</button>
+
+    <div class="section-title">Texto de Guisados (Debajo)</div>
+    <div class="form-group">
+      <label>Texto Secundario:</label>
+      <input type="text" id="in-footer" value="Porción infantil $35" oninput="actualizar()">
+    </div>
+
+    <button onclick="descargarImagen()">Generar e Imprimir Imagen</button>
+  </div>
+
+  <!-- PLANTILLA IMPRESA/VISUAL -->
+  <div class="canvas-container" id="menu-card">
+    <div class="header">
+      <div class="institution-info">
+        <div class="inst-line1" id="out-linea1">Primaria</div>
+        <div class="inst-line2" id="out-linea2">Niños Héroes</div>
+      </div>
+      <div class="date-box">
+        <div class="subtitle">SEMANA DEL</div>
+        <span id="out-semana">31 DE AGOSTO<br>AL 4 DE SEPTIEMBRE</span>
+      </div>
+    </div>
+
+    <div class="main-title">COOPERATIVA ESCOLAR</div>
+
+    <div class="content-grid">
+      <!-- Columna Izquierda (Días) -->
+      <div class="left-column">
+        <!-- LUNES -->
+        <div class="menu-card card-lunes">
+          <div class="card-title">LUNES</div>
+          <div class="menu-list" id="list-lunes"></div>
+        </div>
+        <!-- MARTES -->
+        <div class="menu-card card-martes">
+          <div class="card-title">MARTES</div>
+          <div class="menu-list" id="list-martes"></div>
+        </div>
+        <!-- MIÉRCOLES -->
+        <div class="menu-card card-miercoles">
+          <div class="card-title">MIÉRCOLES</div>
+          <div class="menu-list" id="list-miercoles"></div>
+        </div>
+        <!-- JUEVES -->
+        <div class="menu-card card-jueves">
+          <div class="card-title">JUEVES</div>
+          <div class="menu-list" id="list-jueves"></div>
+        </div>
+        <!-- VIERNES -->
+        <div class="menu-card card-viernes">
+          <div class="card-title">VIERNES</div>
+          <div class="menu-list" id="list-viernes"></div>
+        </div>
+      </div>
+
+      <!-- Columna Derecha (Diariamente, Guisados y Porción Infantil) -->
+      <div class="right-column">
+        <div class="menu-card card-magenta">
+          <div class="card-title">DIARIAMENTE</div>
+          <div class="menu-list" id="out-diariamente"></div>
+        </div>
+
+        <div>
+          <div class="menu-card card-magenta">
+            <div class="card-title">GUISADOS</div>
+            <div class="menu-list" id="out-guisados"></div>
+          </div>
+          <div class="footer-text" id="out-footer">Porción infantil $35</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Estructura de datos por día (Cada día tiene sus 4 platillos + bebida propios)
+    const diasConfig = {
+      lunes: {
+        p1: "TACOS TUXPEÑOS", pr1: "3 X $25",
+        p2: "TORTAS", pr2: "$20",
+        p3: "ESPAGUETTI CON SALCHICHA", pr3: "$25",
+        p4: "PACHUCOS", pr4: "$20",
+        bebida: "AGUA DE LIMÓN CON CHÍA", precioBebida: "$10"
+      },
+      martes: {
+        p1: "ENCHILADAS", pr1: "$30",
+        p2: "MOLLETES", pr2: "$22",
+        p3: "SOPA DE FIDEO", pr3: "$18",
+        p4: "QUESADILLAS", pr4: "$20",
+        bebida: "AGUA DE PIÑA", precioBebida: "$10"
+      },
+      miercoles: {
+        p1: "CHILAQUILES", pr1: "$28",
+        p2: "SINCRONIZADAS", pr2: "$20",
+        p3: "ARROZ CON HUEVO", pr3: "$22",
+        p4: "BURRITOS", pr4: "$25",
+        bebida: "AGUA DE JAMAICA", precioBebida: "$10"
+      },
+      jueves: {
+        p1: "FLAUTAS DE POLLO", pr1: "$30",
+        p2: "HAMBURGUESA", pr2: "$35",
+        p3: "HOT DOGS", pr3: "$20",
+        p4: "NUGGETS DE POLLO", pr4: "$25",
+        bebida: "AGUA DE PEPINO CON LIMÓN", precioBebida: "$10"
+      },
+      viernes: {
+        p1: "PIZZA INDIVIDUAL", pr1: "$30",
+        p2: "TACOS DE CARNE", pr2: "$35",
+        p3: "SOPES DE CHORIZO", pr3: "$25",
+        p4: "TORTA DE JAMÓN", pr4: "$20",
+        bebida: "AGUA DE HORCHATA", precioBebida: "$10"
+      }
+    };
+
+    // Configuración Inicial de Diariamente
+    let diariamenteItems = [
+      { activo: true, nombre: "GELATINAS", precio: "$10" },
+      { activo: true, nombre: "FLAN", precio: "$12" },
+      { activo: true, nombre: "PALOMITAS", precio: "$10" },
+      { activo: true, nombre: "CARLOTAS", precio: "$15" },
+      { activo: true, nombre: "CACAHUATES", precio: "$10" },
+      { activo: true, nombre: "AGUA NATURAL", precio: "$15" },
+      { activo: true, nombre: "CHOCOMILK", precio: "$15" },
+      { activo: true, nombre: "GALLETA DE AVENA", precio: "$13" },
+      { activo: true, nombre: "GALLETA DE NUÉZ", precio: "$10" },
+      { activo: true, nombre: "CHOCOBANANA", precio: "$10" },
+      { activo: true, nombre: "HIELITOS", precio: "$10" },
+      { activo: true, nombre: "YOGURT CON FRUTA", precio: "$15" },
+      { activo: true, nombre: "FRUTA PICADA", precio: "$12" },
+      { activo: true, nombre: "ARRÓZ CON LECHE", precio: "$15" }
+    ];
+
+    function generarInputsDias() {
+      const dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes'];
+      dias.forEach(dia => {
+        const container = document.getElementById(`inputs-${dia}`);
+        const data = diasConfig[dia];
+        container.innerHTML = `
+          <div class="item-row"><input type="text" value="${data.p1}" oninput="updateDia('${dia}', 'p1', this.value)"><input type="text" style="width:65px" value="${data.pr1}" oninput="updateDia('${dia}', 'pr1', this.value)"></div>
+          <div class="item-row"><input type="text" value="${data.p2}" oninput="updateDia('${dia}', 'p2', this.value)"><input type="text" style="width:65px" value="${data.pr2}" oninput="updateDia('${dia}', 'pr2', this.value)"></div>
+          <div class="item-row"><input type="text" value="${data.p3}" oninput="updateDia('${dia}', 'p3', this.value)"><input type="text" style="width:65px" value="${data.pr3}" oninput="updateDia('${dia}', 'pr3', this.value)"></div>
+          <div class="item-row"><input type="text" value="${data.p4}" oninput="updateDia('${dia}', 'p4', this.value)"><input type="text" style="width:65px" value="${data.pr4}" oninput="updateDia('${dia}', 'pr4', this.value)"></div>
+          <div class="item-row"><input type="text" value="${data.bebida}" oninput="updateDia('${dia}', 'bebida', this.value)"><input type="text" style="width:65px" value="${data.precioBebida}" oninput="updateDia('${dia}', 'precioBebida', this.value)"></div>
+        `;
+      });
+    }
+
+    function updateDia(dia, key, val) {
+      diasConfig[dia][key] = val;
+      actualizar();
+    }
+
+    function renderDiariamenteControls() {
+      const container = document.getElementById('diariamente-inputs');
+      container.innerHTML = '';
+      diariamenteItems.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'item-row';
+        div.innerHTML = `
+          <input type="checkbox" ${item.activo ? 'checked' : ''} onchange="toggleDiario(${idx})">
+          <input type="text" value="${item.nombre}" oninput="updateDiario(${idx}, 'nombre', this.value)">
+          <input type="text" style="width:60px" value="${item.precio}" oninput="updateDiario(${idx}, 'precio', this.value)">
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function toggleDiario(idx) {
+      diariamenteItems[idx].activo = !diariamenteItems[idx].activo;
+      actualizar();
+    }
+
+    function updateDiario(idx, key, val) {
+      diariamenteItems[idx][key] = val;
+      actualizar();
+    }
+
+    function agregarItemDiario() {
+      diariamenteItems.push({ activo: true, nombre: "NUEVO ITEM", precio: "$10" });
+      renderDiariamenteControls();
+      actualizar();
+    }
+
+    function renderDayBlock(dia) {
+      const data = diasConfig[dia];
+      return `
+        <div class="menu-item"><span>${data.p1}</span><span class="dots"></span><span>${data.pr1}</span></div>
+        <div class="menu-item"><span>${data.p2}</span><span class="dots"></span><span>${data.pr2}</span></div>
+        <div class="menu-item"><span>${data.p3}</span><span class="dots"></span><span>${data.pr3}</span></div>
+        <div class="menu-item"><span>${data.p4}</span><span class="dots"></span><span>${data.pr4}</span></div>
+        <div class="menu-item"><span>${data.bebida}</span><span class="dots"></span><span>${data.precioBebida}</span></div>
+      `;
+    }
+
+    function actualizar() {
+      // Encabezado
+      document.getElementById('out-linea1').innerText = document.getElementById('in-linea1').value;
+      document.getElementById('out-linea2').innerText = document.getElementById('in-linea2').value;
+      
+      let sem = document.getElementById('in-semana').value.toUpperCase();
+      if (sem.includes(' AL ')) sem = sem.replace(' AL ', '<br>AL ');
+      document.getElementById('out-semana').innerHTML = sem;
+
+      // Días
+      document.getElementById('list-lunes').innerHTML = renderDayBlock('lunes');
+      document.getElementById('list-martes').innerHTML = renderDayBlock('martes');
+      document.getElementById('list-miercoles').innerHTML = renderDayBlock('miercoles');
+      document.getElementById('list-jueves').innerHTML = renderDayBlock('jueves');
+      document.getElementById('list-viernes').innerHTML = renderDayBlock('viernes');
+
+      // Diariamente
+      const diarioContainer = document.getElementById('out-diariamente');
+      diarioContainer.innerHTML = '';
+      diariamenteItems.filter(i => i.activo).forEach(i => {
+        diarioContainer.innerHTML += `
+          <div class="menu-item"><span>${i.nombre}</span><span class="dots"></span><span>${i.precio}</span></div>
+        `;
+      });
+
+      // Guisados
+      document.getElementById('out-guisados').innerHTML = `
+        <div class="guisado-item"><span>LUNES ---</span> <span>${document.getElementById('in-g-lunes').value}</span></div>
+        <div class="guisado-item"><span>MARTES ---</span> <span>${document.getElementById('in-g-martes').value}</span></div>
+        <div class="guisado-item"><span>MIÉRCOLES ---</span> <span>${document.getElementById('in-g-miercoles').value}</span></div>
+        <div class="guisado-item"><span>JUEVES ---</span> <span>${document.getElementById('in-g-jueves').value}</span></div>
+        <div class="guisado-item"><span>VIERNES ---</span> <span>${document.getElementById('in-g-viernes').value}</span></div>
+      `;
+
+      // Texto debajo de Guisados
+      document.getElementById('out-footer').innerText = document.getElementById('in-footer').value;
+    }
+
+    function descargarImagen() {
+      const elemento = document.getElementById('menu-card');
+      html2canvas(elemento, { scale: 2 }).then(canvas => {
+        const enlace = document.createElement('a');
+        enlace.download = 'cooperativa_escolar.png';
+        enlace.href = canvas.toDataURL('image/png');
+        enlace.click();
+      });
+    }
+
+    // Inicialización
+    generarInputsDias();
+    renderDiariamenteControls();
+    actualizar();
+  </script>
+</body>
+</html>
