@@ -2,9 +2,17 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>Generador de Menú - Cooperativa Escolar</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     :root {
       --color-lunes: #ffaa5b;
       --color-martes: #8ce667;
@@ -12,217 +20,433 @@
       --color-jueves: #ff85cb;
       --color-viernes: #6ee3fb;
       --color-magenta: #e6007e;
+      --color-primary: #e6007e;
+      --color-primary-dark: #c2185b;
+      --color-primary-light: #fce4ec;
+      --color-surface: #ffffff;
+      --color-background: #f5f5f7;
+      --color-text: #1a1a1a;
+      --color-text-secondary: #5a5a5a;
+      --shadow-elevation-1: 0 2px 4px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-elevation-2: 0 6px 16px rgba(0,0,0,0.12);
+      --shadow-elevation-3: 0 10px 30px rgba(0,0,0,0.15);
+      --radius: 16px;
+      --radius-sm: 10px;
     }
 
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f9;
-      margin: 0;
-      padding: 20px;
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--color-background);
+      color: var(--color-text);
+      padding: 16px;
+      min-height: 100vh;
       display: flex;
-      gap: 20px;
-      justify-content: center;
-      align-items: flex-start;
+      flex-direction: column;
+      align-items: center;
     }
 
-    /* Panel de controles */
+    /* ===== PANEL DE CONTROLES ===== */
     .controls {
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      width: 400px;
-      max-height: 90vh;
-      overflow-y: auto;
+      width: 100%;
+      max-width: 520px;
+      background: var(--color-surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-elevation-2);
+      padding: 20px 18px 28px;
+      margin-bottom: 24px;
+      transition: all 0.2s;
     }
 
-    .controls h2 {
-      margin-top: 0;
-      font-size: 18px;
-      color: #333;
+    .controls-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--color-primary-light);
+    }
+
+    .controls-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-primary);
+      letter-spacing: 0.3px;
+    }
+
+    .badge-count {
+      background: var(--color-primary-light);
+      color: var(--color-primary);
+      font-weight: 600;
+      font-size: 13px;
+      padding: 4px 12px;
+      border-radius: 20px;
     }
 
     .section-title {
-      font-weight: bold;
-      color: var(--color-magenta);
-      margin: 15px 0 8px 0;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 4px;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--color-primary);
+      margin: 18px 0 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .day-group-title {
-      font-weight: bold;
-      font-size: 13px;
-      padding: 4px 8px;
-      border-radius: 4px;
-      margin: 10px 0 6px 0;
+    .section-title::before {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg, var(--color-primary-light), transparent);
+      margin-left: 8px;
     }
-
-    .title-lunes { background-color: #ffe5cc; color: #d96b00; }
-    .title-martes { background-color: #e2f8d8; color: #3b821e; }
-    .title-miercoles { background-color: #fffde0; color: #8a8000; }
-    .title-jueves { background-color: #ffe0f3; color: #b81478; }
-    .title-viernes { background-color: #e0f8fe; color: #007799; }
 
     .form-group {
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     .form-group label {
       display: block;
-      font-size: 12px;
-      font-weight: bold;
-      margin-bottom: 2px;
-      color: #555;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      margin-bottom: 4px;
     }
 
     .form-group input {
       width: 100%;
-      padding: 6px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
-      font-size: 13px;
+      padding: 10px 14px;
+      border: 1.5px solid #e0e0e0;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      background: #fafafa;
+      transition: border 0.2s, box-shadow 0.2s;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(230, 0, 126, 0.12);
+      background: #fff;
+    }
+
+    .day-group-title {
+      font-weight: 600;
+      font-size: 14px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      margin: 12px 0 8px 0;
+      display: inline-block;
+    }
+
+    .title-lunes { background: #fff0e0; color: #b85e00; }
+    .title-martes { background: #e6f8db; color: #2d7a12; }
+    .title-miercoles { background: #fefae0; color: #7a7000; }
+    .title-jueves { background: #ffe0f2; color: #a01068; }
+    .title-viernes { background: #ddf7fe; color: #006688; }
+
+    .items-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 6px;
     }
 
     .item-row {
       display: flex;
       align-items: center;
-      gap: 5px;
-      margin-bottom: 5px;
+      gap: 8px;
+      background: #f8f8fa;
+      padding: 6px 10px 6px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid #ececec;
+      transition: background 0.15s, border-color 0.2s;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .item-row:active {
+      cursor: grabbing;
+    }
+
+    .item-row.dragging {
+      opacity: 0.5;
+      border-color: var(--color-primary);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .item-row.drag-over {
+      border-color: var(--color-primary);
+      background: var(--color-primary-light);
+      border-style: dashed;
+    }
+
+    .item-row:hover {
+      background: #f0f0f4;
+    }
+
+    .drag-handle {
+      color: #aaa;
+      font-size: 16px;
+      cursor: grab;
+      padding: 0 2px;
+      flex-shrink: 0;
+      letter-spacing: -2px;
+    }
+
+    .item-row:active .drag-handle {
+      cursor: grabbing;
     }
 
     .item-row input[type="text"] {
       flex: 1;
+      padding: 7px 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      background: #fff;
+      min-width: 0;
     }
 
-    button {
-      width: 100%;
-      background-color: var(--color-magenta);
+    .item-row input[type="text"]:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px rgba(230, 0, 126, 0.1);
+      outline: none;
+    }
+
+    .item-row input.price-input {
+      width: 70px;
+      flex: 0 0 70px;
+    }
+
+    .item-row .checkbox-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      flex-shrink: 0;
+    }
+
+    .item-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      background: var(--color-primary);
       color: white;
       border: none;
-      padding: 12px;
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
       font-size: 15px;
-      font-weight: bold;
+      font-weight: 600;
       cursor: pointer;
-      margin-top: 15px;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      font-family: 'Roboto', sans-serif;
+      width: 100%;
+      margin-top: 12px;
+      box-shadow: 0 2px 6px rgba(230, 0, 126, 0.25);
     }
 
-    button:hover {
-      background-color: #c2185b;
+    .btn:active {
+      transform: scale(0.97);
     }
 
-    .btn-add {
-      background-color: #2196F3;
-      padding: 6px;
+    .btn:hover {
+      background: var(--color-primary-dark);
+      box-shadow: 0 4px 12px rgba(230, 0, 126, 0.3);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--color-primary);
+      border: 1.5px solid var(--color-primary);
+      box-shadow: none;
+      padding: 9px 12px;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .btn-outline:hover {
+      background: var(--color-primary-light);
+      box-shadow: none;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
       font-size: 12px;
-      margin-top: 5px;
+      width: auto;
+      margin-top: 0;
+      box-shadow: none;
+      background: var(--color-primary);
+      color: white;
+      border-radius: 20px;
+      font-weight: 500;
     }
 
-    /* Plantilla para renderizar el Menú */
+    .btn-sm:hover {
+      background: var(--color-primary-dark);
+    }
+
+    .btn-remove {
+      background: transparent;
+      color: #999;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 0 4px;
+      line-height: 1;
+      font-weight: 300;
+      flex-shrink: 0;
+    }
+
+    .btn-remove:hover {
+      color: #d32f2f;
+    }
+
+    .add-row-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      border: 1.5px dashed #ccc;
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      width: 100%;
+      justify-content: center;
+      font-weight: 500;
+      transition: border 0.2s, color 0.2s;
+      margin-top: 4px;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .add-row-btn:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    /* ===== CANVAS / PLANTILLA ===== */
+    .canvas-wrapper {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      justify-content: center;
+    }
+
     .canvas-container {
       background: white;
-      width: 595px;
-      min-height: 842px;
-      padding: 30px;
+      width: 100%;
+      max-width: 480px;
+      padding: 24px 20px 28px;
       box-sizing: border-box;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      box-shadow: var(--shadow-elevation-3);
+      border-radius: var(--radius);
       display: flex;
       flex-direction: column;
-      position: relative;
+      transition: all 0.2s;
     }
 
-    /* Encabezado */
+    /* Header */
     .header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
+      margin-bottom: 8px;
     }
 
     .institution-info {
       color: var(--color-magenta);
-      font-weight: bold;
-      line-height: 1.1;
+      font-weight: 700;
+      line-height: 1.15;
     }
 
-    .inst-line1 { font-size: 20px; }
-    .inst-line2 { font-size: 22px; }
+    .inst-line1 { font-size: 18px; }
+    .inst-line2 { font-size: 20px; }
 
     .date-box {
       text-align: right;
-      font-size: 12px;
-      font-weight: bold;
+      font-size: 11px;
+      font-weight: 600;
       color: #222;
+      line-height: 1.3;
     }
 
     .date-box .subtitle {
       color: var(--color-magenta);
-      font-size: 10px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
     }
 
     .main-title {
       text-align: center;
-      font-size: 26px;
+      font-size: 22px;
       font-weight: 900;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       color: #111;
-      margin: 15px 0 20px 0;
-      font-family: 'Arial Black', sans-serif;
+      margin: 8px 0 14px 0;
+      font-family: 'Roboto', sans-serif;
     }
 
-    /* Layout principal de 2 columnas */
+    /* Grid 2 columnas */
     .content-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: 14px;
     }
 
     .left-column, .right-column {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
-    /* Estilo de Tarjetas/Cajas */
     .menu-card {
       border: 2px solid;
-      border-radius: 20px;
-      padding: 10px 15px;
+      border-radius: 16px;
+      padding: 8px 12px 10px;
       background: #fff;
     }
 
     .card-title {
       text-align: center;
-      font-weight: bold;
-      font-size: 15px;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.3px;
+      margin-bottom: 6px;
     }
 
     .menu-list {
       list-style: none;
       padding: 0;
       margin: 0;
-      font-size: 10px;
-      font-weight: bold;
+      font-size: 9px;
+      font-weight: 600;
       color: #222;
     }
 
     .menu-item {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
       text-transform: uppercase;
+      font-size: 9px;
+      line-height: 1.3;
     }
 
     .menu-item .dots {
       flex: 1;
-      border-bottom: 1px dashed #999;
-      margin: 0 4px 3px 4px;
+      border-bottom: 1px dashed #bbb;
+      margin: 0 4px 2px 4px;
     }
 
-    /* Colores especificos de bordes */
+    /* Colores de bordes */
     .card-lunes { border-color: var(--color-lunes); }
     .card-martes { border-color: var(--color-martes); }
     .card-miercoles { border-color: var(--color-miercoles); }
@@ -230,94 +454,114 @@
     .card-viernes { border-color: var(--color-viernes); }
     .card-magenta { border-color: var(--color-magenta); }
 
-    /* Estilos específicos columna derecha */
     .guisado-item {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 4px;
-      font-size: 10px;
-      font-weight: bold;
+      margin-bottom: 3px;
+      font-size: 9px;
+      font-weight: 600;
       text-transform: uppercase;
+      line-height: 1.3;
     }
 
-    /* Texto ajustado abajo de los guisados */
+    .guisado-item .dots {
+      flex: 1;
+      border-bottom: 1px dashed #bbb;
+      margin: 0 4px 2px 4px;
+    }
+
     .footer-text {
       text-align: center;
-      font-size: 18px;
-      font-weight: bold;
+      font-size: 13px;
+      font-weight: 700;
       color: #111;
-      margin-top: 15px;
+      margin-top: 8px;
+      line-height: 1.5;
     }
 
-    @media (max-width: 1024px) {
-      body { flex-direction: column; align-items: center; }
-      .controls { width: 100%; max-width: 500px; }
+    .footer-text small {
+      font-weight: 400;
+      font-size: 11px;
+      color: #555;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .controls { padding: 16px 14px 20px; }
+      .canvas-container { padding: 18px 14px 20px; }
+      .content-grid { gap: 10px; }
+      .menu-card { padding: 6px 8px 8px; }
+      .menu-item { font-size: 8px; }
+      .guisado-item { font-size: 8px; }
+      .card-title { font-size: 11px; }
+      .inst-line1 { font-size: 15px; }
+      .inst-line2 { font-size: 17px; }
+      .main-title { font-size: 18px; }
+      .footer-text { font-size: 11px; }
+      .item-row input[type="text"] { font-size: 12px; padding: 6px 8px; }
+      .item-row .price-input { width: 60px; flex: 0 0 60px; }
+    }
+
+    @media (min-width: 768px) {
+      body { padding: 32px; }
+      .controls { max-width: 580px; }
+      .canvas-container { max-width: 520px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- PANEL DE CONTROL -->
-  <div class="controls">
-    <h2>Configuración del Menú</h2>
-    
-    <div class="section-title">Encabezado</div>
-    <div class="form-group">
-      <label>Título L1 (ej. Primaria):</label>
-      <input type="text" id="in-linea1" value="Primaria" oninput="actualizar()">
-    </div>
-    <div class="form-group">
-      <label>Título L2 (ej. Niños Héroes):</label>
-      <input type="text" id="in-linea2" value="Niños Héroes" oninput="actualizar()">
-    </div>
-    <div class="form-group">
-      <label>Rango de Fechas:</label>
-      <input type="text" id="in-semana" value="31 DE AGOSTO AL 4 DE SEPTIEMBRE" oninput="actualizar()">
-    </div>
-
-    <div class="section-title">Comidas por Día (4 Platillos + 1 Bebida)</div>
-    
-    <!-- LUNES -->
-    <div class="day-group-title title-lunes">LUNES</div>
-    <div id="inputs-lunes"></div>
-
-    <!-- MARTES -->
-    <div class="day-group-title title-martes">MARTES</div>
-    <div id="inputs-martes"></div>
-
-    <!-- MIÉRCOLES -->
-    <div class="day-group-title title-miercoles">MIÉRCOLES</div>
-    <div id="inputs-miercoles"></div>
-
-    <!-- JUEVES -->
-    <div class="day-group-title title-jueves">JUEVES</div>
-    <div id="inputs-jueves"></div>
-
-    <!-- VIERNES -->
-    <div class="day-group-title title-viernes">VIERNES</div>
-    <div id="inputs-viernes"></div>
-
-    <div class="section-title">Guisados del Día</div>
-    <div class="form-group"><label>Lunes:</label><input type="text" id="in-g-lunes" value="PICADILLO" oninput="actualizar()"></div>
-    <div class="form-group"><label>Martes:</label><input type="text" id="in-g-martes" value="TACOS DE PAPA" oninput="actualizar()"></div>
-    <div class="form-group"><label>Miércoles:</label><input type="text" id="in-g-miercoles" value="POLLO AL CHIPOTLE" oninput="actualizar()"></div>
-    <div class="form-group"><label>Jueves:</label><input type="text" id="in-g-jueves" value="ALBÓNDIGAS" oninput="actualizar()"></div>
-    <div class="form-group"><label>Viernes:</label><input type="text" id="in-g-viernes" value="TACOS DE CARNE ASADA" oninput="actualizar()"></div>
-
-    <div class="section-title">Sección "Diariamente"</div>
-    <div id="diariamente-inputs"></div>
-    <button type="button" class="btn-add" onclick="agregarItemDiario()">+ Agregar Producto</button>
-
-    <div class="section-title">Texto de Guisados (Debajo)</div>
-    <div class="form-group">
-      <label>Texto Secundario:</label>
-      <input type="text" id="in-footer" value="Porción infantil $35" oninput="actualizar()">
-    </div>
-
-    <button onclick="descargarImagen()">Generar e Imprimir Imagen</button>
+<!-- PANEL DE CONTROL -->
+<div class="controls">
+  <div class="controls-header">
+    <h2>🍽️ Configurar Menú</h2>
+    <span class="badge-count">Edición</span>
   </div>
 
-  <!-- PLANTILLA IMPRESA/VISUAL -->
+  <!-- Encabezado -->
+  <div class="section-title">Encabezado</div>
+  <div class="form-group">
+    <label>Línea 1 (ej. Primaria)</label>
+    <input type="text" id="in-linea1" value="Primaria" oninput="actualizar()">
+  </div>
+  <div class="form-group">
+    <label>Línea 2 (ej. Niños Héroes)</label>
+    <input type="text" id="in-linea2" value="Niños Héroes" oninput="actualizar()">
+  </div>
+  <div class="form-group">
+    <label>Rango de fechas</label>
+    <input type="text" id="in-semana" value="31 DE AGOSTO AL 4 DE SEPTIEMBRE" oninput="actualizar()">
+  </div>
+
+  <!-- Comidas por día (dinámico) -->
+  <div class="section-title">Comidas por día</div>
+  <div id="dias-container"></div>
+
+  <!-- Guisados -->
+  <div class="section-title">Guisados del día</div>
+  <div id="guisados-container"></div>
+
+  <!-- Diariamente -->
+  <div class="section-title">Diariamente</div>
+  <div id="diariamente-container"></div>
+  <button class="add-row-btn" onclick="agregarItemDiario()">+ Agregar producto</button>
+
+  <!-- Textos inferiores -->
+  <div class="section-title">Textos finales</div>
+  <div class="form-group">
+    <label>Porción infantil</label>
+    <input type="text" id="in-footer-infantil" value="Porción infantil $35" oninput="actualizar()">
+  </div>
+  <div class="form-group">
+    <label>Porción maestros</label>
+    <input type="text" id="in-footer-maestros" value="Porción maestros $45" oninput="actualizar()">
+  </div>
+
+  <button class="btn" onclick="descargarImagen()">📥 Generar y descargar imagen</button>
+</div>
+
+<!-- PLANTILLA VISUAL -->
+<div class="canvas-wrapper">
   <div class="canvas-container" id="menu-card">
     <div class="header">
       <div class="institution-info">
@@ -333,225 +577,440 @@
     <div class="main-title">COOPERATIVA ESCOLAR</div>
 
     <div class="content-grid">
-      <!-- Columna Izquierda (Días) -->
-      <div class="left-column">
-        <!-- LUNES -->
-        <div class="menu-card card-lunes">
-          <div class="card-title">LUNES</div>
-          <div class="menu-list" id="list-lunes"></div>
-        </div>
-        <!-- MARTES -->
-        <div class="menu-card card-martes">
-          <div class="card-title">MARTES</div>
-          <div class="menu-list" id="list-martes"></div>
-        </div>
-        <!-- MIÉRCOLES -->
-        <div class="menu-card card-miercoles">
-          <div class="card-title">MIÉRCOLES</div>
-          <div class="menu-list" id="list-miercoles"></div>
-        </div>
-        <!-- JUEVES -->
-        <div class="menu-card card-jueves">
-          <div class="card-title">JUEVES</div>
-          <div class="menu-list" id="list-jueves"></div>
-        </div>
-        <!-- VIERNES -->
-        <div class="menu-card card-viernes">
-          <div class="card-title">VIERNES</div>
-          <div class="menu-list" id="list-viernes"></div>
-        </div>
-      </div>
-
-      <!-- Columna Derecha (Diariamente, Guisados y Porción Infantil) -->
+      <div class="left-column" id="dias-render"></div>
       <div class="right-column">
         <div class="menu-card card-magenta">
           <div class="card-title">DIARIAMENTE</div>
           <div class="menu-list" id="out-diariamente"></div>
         </div>
-
         <div>
           <div class="menu-card card-magenta">
             <div class="card-title">GUISADOS</div>
             <div class="menu-list" id="out-guisados"></div>
           </div>
-          <div class="footer-text" id="out-footer">Porción infantil $35</div>
+          <div class="footer-text" id="out-footer-infantil">Porción infantil $35</div>
+          <div class="footer-text" id="out-footer-maestros" style="font-size:12px; color:#555; margin-top:2px;">Porción maestros $45</div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    // Estructura de datos por día (Cada día tiene sus 4 platillos + bebida propios)
-    const diasConfig = {
-      lunes: {
-        p1: "TACOS TUXPEÑOS", pr1: "3 X $25",
-        p2: "TORTAS", pr2: "$20",
-        p3: "ESPAGUETTI CON SALCHICHA", pr3: "$25",
-        p4: "PACHUCOS", pr4: "$20",
-        bebida: "AGUA DE LIMÓN CON CHÍA", precioBebida: "$10"
-      },
-      martes: {
-        p1: "ENCHILADAS", pr1: "$30",
-        p2: "MOLLETES", pr2: "$22",
-        p3: "SOPA DE FIDEO", pr3: "$18",
-        p4: "QUESADILLAS", pr4: "$20",
-        bebida: "AGUA DE PIÑA", precioBebida: "$10"
-      },
-      miercoles: {
-        p1: "CHILAQUILES", pr1: "$28",
-        p2: "SINCRONIZADAS", pr2: "$20",
-        p3: "ARROZ CON HUEVO", pr3: "$22",
-        p4: "BURRITOS", pr4: "$25",
-        bebida: "AGUA DE JAMAICA", precioBebida: "$10"
-      },
-      jueves: {
-        p1: "FLAUTAS DE POLLO", pr1: "$30",
-        p2: "HAMBURGUESA", pr2: "$35",
-        p3: "HOT DOGS", pr3: "$20",
-        p4: "NUGGETS DE POLLO", pr4: "$25",
-        bebida: "AGUA DE PEPINO CON LIMÓN", precioBebida: "$10"
-      },
-      viernes: {
-        p1: "PIZZA INDIVIDUAL", pr1: "$30",
-        p2: "TACOS DE CARNE", pr2: "$35",
-        p3: "SOPES DE CHORIZO", pr3: "$25",
-        p4: "TORTA DE JAMÓN", pr4: "$20",
-        bebida: "AGUA DE HORCHATA", precioBebida: "$10"
-      }
-    };
+<script>
+  // ===== ESTRUCTURA DE DATOS =====
+  const diasData = {
+    lunes: { label: 'LUNES', cls: 'card-lunes', titleCls: 'title-lunes', items: [] },
+    martes: { label: 'MARTES', cls: 'card-martes', titleCls: 'title-martes', items: [] },
+    miercoles: { label: 'MIÉRCOLES', cls: 'card-miercoles', titleCls: 'title-miercoles', items: [] },
+    jueves: { label: 'JUEVES', cls: 'card-jueves', titleCls: 'title-jueves', items: [] },
+    viernes: { label: 'VIERNES', cls: 'card-viernes', titleCls: 'title-viernes', items: [] }
+  };
 
-    // Configuración Inicial de Diariamente
-    let diariamenteItems = [
-      { activo: true, nombre: "GELATINAS", precio: "$10" },
-      { activo: true, nombre: "FLAN", precio: "$12" },
-      { activo: true, nombre: "PALOMITAS", precio: "$10" },
-      { activo: true, nombre: "CARLOTAS", precio: "$15" },
-      { activo: true, nombre: "CACAHUATES", precio: "$10" },
-      { activo: true, nombre: "AGUA NATURAL", precio: "$15" },
-      { activo: true, nombre: "CHOCOMILK", precio: "$15" },
-      { activo: true, nombre: "GALLETA DE AVENA", precio: "$13" },
-      { activo: true, nombre: "GALLETA DE NUÉZ", precio: "$10" },
-      { activo: true, nombre: "CHOCOBANANA", precio: "$10" },
-      { activo: true, nombre: "HIELITOS", precio: "$10" },
-      { activo: true, nombre: "YOGURT CON FRUTA", precio: "$15" },
-      { activo: true, nombre: "FRUTA PICADA", precio: "$12" },
-      { activo: true, nombre: "ARRÓZ CON LECHE", precio: "$15" }
-    ];
+  const initialData = {
+    lunes: [
+      { nombre: 'TACOS TUXPEÑOS', precio: '3 X $25', activo: true },
+      { nombre: 'TORTAS', precio: '$20', activo: true },
+      { nombre: 'ESPAGUETTI CON SALCHICHA', precio: '$25', activo: true },
+      { nombre: 'PACHUCOS', precio: '$20', activo: true },
+      { nombre: 'AGUA DE LIMÓN CON CHÍA', precio: '$10', activo: true }
+    ],
+    martes: [
+      { nombre: 'ENCHILADAS', precio: '$30', activo: true },
+      { nombre: 'MOLLETES', precio: '$22', activo: true },
+      { nombre: 'SOPA DE FIDEO', precio: '$18', activo: true },
+      { nombre: 'QUESADILLAS', precio: '$20', activo: true },
+      { nombre: 'AGUA DE PIÑA', precio: '$10', activo: true }
+    ],
+    miercoles: [
+      { nombre: 'CHILAQUILES', precio: '$28', activo: true },
+      { nombre: 'SINCRONIZADAS', precio: '$20', activo: true },
+      { nombre: 'ARROZ CON HUEVO', precio: '$22', activo: true },
+      { nombre: 'BURRITOS', precio: '$25', activo: true },
+      { nombre: 'AGUA DE JAMAICA', precio: '$10', activo: true }
+    ],
+    jueves: [
+      { nombre: 'FLAUTAS DE POLLO', precio: '$30', activo: true },
+      { nombre: 'HAMBURGUESA', precio: '$35', activo: true },
+      { nombre: 'HOT DOGS', precio: '$20', activo: true },
+      { nombre: 'NUGGETS DE POLLO', precio: '$25', activo: true },
+      { nombre: 'AGUA DE PEPINO CON LIMÓN', precio: '$10', activo: true }
+    ],
+    viernes: [
+      { nombre: 'PIZZA INDIVIDUAL', precio: '$30', activo: true },
+      { nombre: 'TACOS DE CARNE', precio: '$35', activo: true },
+      { nombre: 'SOPES DE CHORIZO', precio: '$25', activo: true },
+      { nombre: 'TORTA DE JAMÓN', precio: '$20', activo: true },
+      { nombre: 'AGUA DE HORCHATA', precio: '$10', activo: true }
+    ]
+  };
 
-    function generarInputsDias() {
-      const dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes'];
-      dias.forEach(dia => {
-        const container = document.getElementById(`inputs-${dia}`);
-        const data = diasConfig[dia];
-        container.innerHTML = `
-          <div class="item-row"><input type="text" value="${data.p1}" oninput="updateDia('${dia}', 'p1', this.value)"><input type="text" style="width:65px" value="${data.pr1}" oninput="updateDia('${dia}', 'pr1', this.value)"></div>
-          <div class="item-row"><input type="text" value="${data.p2}" oninput="updateDia('${dia}', 'p2', this.value)"><input type="text" style="width:65px" value="${data.pr2}" oninput="updateDia('${dia}', 'pr2', this.value)"></div>
-          <div class="item-row"><input type="text" value="${data.p3}" oninput="updateDia('${dia}', 'p3', this.value)"><input type="text" style="width:65px" value="${data.pr3}" oninput="updateDia('${dia}', 'pr3', this.value)"></div>
-          <div class="item-row"><input type="text" value="${data.p4}" oninput="updateDia('${dia}', 'p4', this.value)"><input type="text" style="width:65px" value="${data.pr4}" oninput="updateDia('${dia}', 'pr4', this.value)"></div>
-          <div class="item-row"><input type="text" value="${data.bebida}" oninput="updateDia('${dia}', 'bebida', this.value)"><input type="text" style="width:65px" value="${data.precioBebida}" oninput="updateDia('${dia}', 'precioBebida', this.value)"></div>
-        `;
-      });
+  for (const [key, data] of Object.entries(initialData)) {
+    diasData[key].items = data.map(item => ({ ...item }));
+  }
+
+  let guisadosData = [
+    { dia: 'LUNES', value: 'PICADILLO' },
+    { dia: 'MARTES', value: 'TACOS DE PAPA' },
+    { dia: 'MIÉRCOLES', value: 'POLLO AL CHIPOTLE' },
+    { dia: 'JUEVES', value: 'ALBÓNDIGAS' },
+    { dia: 'VIERNES', value: 'TACOS DE CARNE ASADA' }
+  ];
+
+  let diariamenteItems = [
+    { nombre: 'GELATINAS', precio: '$10', activo: true },
+    { nombre: 'FLAN', precio: '$12', activo: true },
+    { nombre: 'PALOMITAS', precio: '$10', activo: true },
+    { nombre: 'CARLOTAS', precio: '$15', activo: true },
+    { nombre: 'CACAHUATES', precio: '$10', activo: true },
+    { nombre: 'AGUA NATURAL', precio: '$15', activo: true },
+    { nombre: 'CHOCOMILK', precio: '$15', activo: true },
+    { nombre: 'GALLETA DE AVENA', precio: '$13', activo: true },
+    { nombre: 'GALLETA DE NUÉZ', precio: '$10', activo: true },
+    { nombre: 'CHOCOBANANA', precio: '$10', activo: true },
+    { nombre: 'HIELITOS', precio: '$10', activo: true },
+    { nombre: 'YOGURT CON FRUTA', precio: '$15', activo: true },
+    { nombre: 'FRUTA PICADA', precio: '$12', activo: true },
+    { nombre: 'ARRÓZ CON LECHE', precio: '$15', activo: true }
+  ];
+
+  // ===== DRAG & DROP =====
+  let dragState = {
+    sourceType: null, // 'dia' o 'diario'
+    sourceKey: null,
+    sourceIndex: null
+  };
+
+  function initDragAndDrop() {
+    document.querySelectorAll('.items-container').forEach(container => {
+      container.addEventListener('dragstart', handleDragStart);
+      container.addEventListener('dragend', handleDragEnd);
+      container.addEventListener('dragover', handleDragOver);
+      container.addEventListener('dragenter', handleDragEnter);
+      container.addEventListener('dragleave', handleDragLeave);
+      container.addEventListener('drop', handleDrop);
+    });
+  }
+
+  function handleDragStart(e) {
+    const row = e.target.closest('.item-row');
+    if (!row) return;
+    const container = row.closest('.items-container');
+    if (!container) return;
+    
+    const sourceKey = container.dataset.key;
+    const sourceType = container.dataset.type;
+    const items = sourceType === 'dia' ? diasData[sourceKey].items : diariamenteItems;
+    const index = Array.from(container.children).indexOf(row);
+    
+    dragState.sourceType = sourceType;
+    dragState.sourceKey = sourceKey;
+    dragState.sourceIndex = index;
+    
+    row.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', `${sourceType}|${sourceKey}|${index}`);
+    // Forzar un valor para que funcione en móviles (no soportado, pero lo dejamos)
+  }
+
+  function handleDragEnd(e) {
+    const row = e.target.closest('.item-row');
+    if (row) row.classList.remove('dragging');
+    document.querySelectorAll('.item-row.drag-over').forEach(el => el.classList.remove('drag-over'));
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }
+
+  function handleDragEnter(e) {
+    e.preventDefault();
+    const row = e.target.closest('.item-row');
+    if (row) row.classList.add('drag-over');
+  }
+
+  function handleDragLeave(e) {
+    const row = e.target.closest('.item-row');
+    if (row) row.classList.remove('drag-over');
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    const targetRow = e.target.closest('.item-row');
+    if (!targetRow) return;
+    
+    const targetContainer = targetRow.closest('.items-container');
+    if (!targetContainer) return;
+    
+    const targetKey = targetContainer.dataset.key;
+    const targetType = targetContainer.dataset.type;
+    const targetIndex = Array.from(targetContainer.children).indexOf(targetRow);
+    
+    // Obtener origen
+    const data = e.dataTransfer.getData('text/plain');
+    if (!data) return;
+    
+    const [sourceType, sourceKey, sourceIndexStr] = data.split('|');
+    const sourceIndex = parseInt(sourceIndexStr);
+    
+    if (!sourceType || !sourceKey || isNaN(sourceIndex)) return;
+    
+    // No mover si es el mismo elemento
+    if (sourceType === targetType && sourceKey === targetKey && sourceIndex === targetIndex) {
+      targetRow.classList.remove('drag-over');
+      return;
     }
-
-    function updateDia(dia, key, val) {
-      diasConfig[dia][key] = val;
-      actualizar();
+    
+    // Ejecutar movimiento
+    if (sourceType === 'dia' && targetType === 'dia') {
+      moveDiaItem(sourceKey, sourceIndex, targetKey, targetIndex);
+    } else if (sourceType === 'diario' && targetType === 'diario') {
+      moveDiarioItem(sourceIndex, targetIndex);
     }
+    
+    targetRow.classList.remove('drag-over');
+  }
 
-    function renderDiariamenteControls() {
-      const container = document.getElementById('diariamente-inputs');
-      container.innerHTML = '';
-      diariamenteItems.forEach((item, idx) => {
-        const div = document.createElement('div');
-        div.className = 'item-row';
-        div.innerHTML = `
-          <input type="checkbox" ${item.activo ? 'checked' : ''} onchange="toggleDiario(${idx})">
-          <input type="text" value="${item.nombre}" oninput="updateDiario(${idx}, 'nombre', this.value)">
-          <input type="text" style="width:60px" value="${item.precio}" oninput="updateDiario(${idx}, 'precio', this.value)">
-        `;
-        container.appendChild(div);
-      });
+  function moveDiaItem(sourceKey, sourceIndex, targetKey, targetIndex) {
+    const sourceItems = diasData[sourceKey].items;
+    const targetItems = diasData[targetKey].items;
+    
+    if (sourceKey === targetKey) {
+      // Mover dentro del mismo día
+      const [item] = sourceItems.splice(sourceIndex, 1);
+      sourceItems.splice(targetIndex, 0, item);
+    } else {
+      // Mover entre días diferentes
+      const [item] = sourceItems.splice(sourceIndex, 1);
+      targetItems.splice(targetIndex, 0, item);
     }
-
-    function toggleDiario(idx) {
-      diariamenteItems[idx].activo = !diariamenteItems[idx].activo;
-      actualizar();
+    
+    // Re-renderizar ambos contenedores
+    renderDiaItems(sourceKey);
+    if (sourceKey !== targetKey) {
+      renderDiaItems(targetKey);
     }
+    actualizar();
+  }
 
-    function updateDiario(idx, key, val) {
-      diariamenteItems[idx][key] = val;
-      actualizar();
-    }
+  function moveDiarioItem(sourceIndex, targetIndex) {
+    const [item] = diariamenteItems.splice(sourceIndex, 1);
+    diariamenteItems.splice(targetIndex, 0, item);
+    renderDiariamente();
+    actualizar();
+  }
 
-    function agregarItemDiario() {
-      diariamenteItems.push({ activo: true, nombre: "NUEVO ITEM", precio: "$10" });
-      renderDiariamenteControls();
-      actualizar();
-    }
-
-    function renderDayBlock(dia) {
-      const data = diasConfig[dia];
-      return `
-        <div class="menu-item"><span>${data.p1}</span><span class="dots"></span><span>${data.pr1}</span></div>
-        <div class="menu-item"><span>${data.p2}</span><span class="dots"></span><span>${data.pr2}</span></div>
-        <div class="menu-item"><span>${data.p3}</span><span class="dots"></span><span>${data.pr3}</span></div>
-        <div class="menu-item"><span>${data.p4}</span><span class="dots"></span><span>${data.pr4}</span></div>
-        <div class="menu-item"><span>${data.bebida}</span><span class="dots"></span><span>${data.precioBebida}</span></div>
+  // ===== RENDER CONTROLES =====
+  function renderDias() {
+    const container = document.getElementById('dias-container');
+    container.innerHTML = '';
+    const diasKeys = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes'];
+    diasKeys.forEach(key => {
+      const dia = diasData[key];
+      const div = document.createElement('div');
+      div.innerHTML = `
+        <div class="day-group-title ${dia.titleCls}">${dia.label}</div>
+        <div class="items-container" id="items-${key}" data-key="${key}" data-type="dia"></div>
+        <button class="add-row-btn" onclick="agregarItemDia('${key}')">+ Agregar platillo</button>
       `;
+      container.appendChild(div);
+      renderDiaItems(key);
+    });
+    initDragAndDrop();
+  }
+
+  function renderDiaItems(key) {
+    const container = document.getElementById(`items-${key}`);
+    if (!container) return;
+    container.innerHTML = '';
+    const dia = diasData[key];
+    dia.items.forEach((item, idx) => {
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.draggable = true;
+      row.innerHTML = `
+        <span class="drag-handle">⠿</span>
+        <div class="checkbox-wrap">
+          <input type="checkbox" ${item.activo ? 'checked' : ''} onchange="toggleDiaItem('${key}', ${idx})">
+        </div>
+        <input type="text" value="${item.nombre}" oninput="updateDiaItem('${key}', ${idx}, 'nombre', this.value)">
+        <input type="text" class="price-input" value="${item.precio}" oninput="updateDiaItem('${key}', ${idx}, 'precio', this.value)">
+        <button class="btn-remove" onclick="eliminarDiaItem('${key}', ${idx})">✕</button>
+      `;
+      container.appendChild(row);
+    });
+  }
+
+  function agregarItemDia(key) {
+    diasData[key].items.push({ nombre: 'Nuevo platillo', precio: '$0', activo: true });
+    renderDiaItems(key);
+    actualizar();
+    initDragAndDrop();
+  }
+
+  function eliminarDiaItem(key, idx) {
+    if (diasData[key].items.length <= 1) {
+      alert('Debe haber al menos un platillo por día.');
+      return;
     }
+    diasData[key].items.splice(idx, 1);
+    renderDiaItems(key);
+    actualizar();
+  }
 
-    function actualizar() {
-      // Encabezado
-      document.getElementById('out-linea1').innerText = document.getElementById('in-linea1').value;
-      document.getElementById('out-linea2').innerText = document.getElementById('in-linea2').value;
-      
-      let sem = document.getElementById('in-semana').value.toUpperCase();
-      if (sem.includes(' AL ')) sem = sem.replace(' AL ', '<br>AL ');
-      document.getElementById('out-semana').innerHTML = sem;
+  function toggleDiaItem(key, idx) {
+    diasData[key].items[idx].activo = !diasData[key].items[idx].activo;
+    actualizar();
+  }
 
-      // Días
-      document.getElementById('list-lunes').innerHTML = renderDayBlock('lunes');
-      document.getElementById('list-martes').innerHTML = renderDayBlock('martes');
-      document.getElementById('list-miercoles').innerHTML = renderDayBlock('miercoles');
-      document.getElementById('list-jueves').innerHTML = renderDayBlock('jueves');
-      document.getElementById('list-viernes').innerHTML = renderDayBlock('viernes');
+  function updateDiaItem(key, idx, field, val) {
+    diasData[key].items[idx][field] = val;
+    actualizar();
+  }
 
-      // Diariamente
-      const diarioContainer = document.getElementById('out-diariamente');
-      diarioContainer.innerHTML = '';
-      diariamenteItems.filter(i => i.activo).forEach(i => {
+  // ===== GUISADOS CONTROLES =====
+  function renderGuisados() {
+    const container = document.getElementById('guisados-container');
+    container.innerHTML = '';
+    guisadosData.forEach((g, idx) => {
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.style.cursor = 'default';
+      row.innerHTML = `
+        <span style="font-weight:600; font-size:13px; min-width:70px; color:#444;">${g.dia}</span>
+        <input type="text" value="${g.value}" oninput="updateGuisado(${idx}, this.value)" style="flex:1;">
+      `;
+      container.appendChild(row);
+    });
+  }
+
+  function updateGuisado(idx, val) {
+    guisadosData[idx].value = val;
+    actualizar();
+  }
+
+  // ===== DIARIAMENTE CONTROLES =====
+  function renderDiariamente() {
+    const container = document.getElementById('diariamente-container');
+    container.innerHTML = '';
+    diariamenteItems.forEach((item, idx) => {
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.draggable = true;
+      row.innerHTML = `
+        <span class="drag-handle">⠿</span>
+        <div class="checkbox-wrap">
+          <input type="checkbox" ${item.activo ? 'checked' : ''} onchange="toggleDiario(${idx})">
+        </div>
+        <input type="text" value="${item.nombre}" oninput="updateDiario(${idx}, 'nombre', this.value)">
+        <input type="text" class="price-input" value="${item.precio}" oninput="updateDiario(${idx}, 'precio', this.value)">
+        <button class="btn-remove" onclick="eliminarDiario(${idx})">✕</button>
+      `;
+      container.appendChild(row);
+    });
+    // Reiniciar drag & drop para los nuevos elementos
+    initDragAndDrop();
+  }
+
+  function toggleDiario(idx) {
+    diariamenteItems[idx].activo = !diariamenteItems[idx].activo;
+    actualizar();
+  }
+
+  function updateDiario(idx, field, val) {
+    diariamenteItems[idx][field] = val;
+    actualizar();
+  }
+
+  function eliminarDiario(idx) {
+    if (diariamenteItems.length <= 1) {
+      alert('Debe haber al menos un producto en "Diariamente".');
+      return;
+    }
+    diariamenteItems.splice(idx, 1);
+    renderDiariamente();
+    actualizar();
+  }
+
+  function agregarItemDiario() {
+    diariamenteItems.push({ nombre: 'Nuevo producto', precio: '$10', activo: true });
+    renderDiariamente();
+    actualizar();
+  }
+
+  // ===== RENDER CANVAS =====
+  function renderDayBlock(key) {
+    const dia = diasData[key];
+    const items = dia.items.filter(i => i.activo);
+    if (items.length === 0) return `<div class="menu-item" style="color:#aaa; font-style:italic;">Sin items</div>`;
+    return items.map(i => `
+      <div class="menu-item"><span>${i.nombre}</span><span class="dots"></span><span>${i.precio}</span></div>
+    `).join('');
+  }
+
+  function actualizar() {
+    // Encabezado
+    document.getElementById('out-linea1').innerText = document.getElementById('in-linea1').value;
+    document.getElementById('out-linea2').innerText = document.getElementById('in-linea2').value;
+    let sem = document.getElementById('in-semana').value.toUpperCase();
+    if (sem.includes(' AL ')) sem = sem.replace(' AL ', '<br>AL ');
+    document.getElementById('out-semana').innerHTML = sem;
+
+    // Días en canvas
+    const diasKeys = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes'];
+    const renderContainer = document.getElementById('dias-render');
+    renderContainer.innerHTML = '';
+    diasKeys.forEach(key => {
+      const dia = diasData[key];
+      const card = document.createElement('div');
+      card.className = `menu-card ${dia.cls}`;
+      card.innerHTML = `
+        <div class="card-title">${dia.label}</div>
+        <div class="menu-list">${renderDayBlock(key)}</div>
+      `;
+      renderContainer.appendChild(card);
+    });
+
+    // Diariamente
+    const diarioContainer = document.getElementById('out-diariamente');
+    diarioContainer.innerHTML = '';
+    const activeDiario = diariamenteItems.filter(i => i.activo);
+    if (activeDiario.length === 0) {
+      diarioContainer.innerHTML = `<div class="menu-item" style="color:#aaa; font-style:italic;">Sin productos</div>`;
+    } else {
+      activeDiario.forEach(i => {
         diarioContainer.innerHTML += `
           <div class="menu-item"><span>${i.nombre}</span><span class="dots"></span><span>${i.precio}</span></div>
         `;
       });
-
-      // Guisados
-      document.getElementById('out-guisados').innerHTML = `
-        <div class="guisado-item"><span>LUNES ---</span> <span>${document.getElementById('in-g-lunes').value}</span></div>
-        <div class="guisado-item"><span>MARTES ---</span> <span>${document.getElementById('in-g-martes').value}</span></div>
-        <div class="guisado-item"><span>MIÉRCOLES ---</span> <span>${document.getElementById('in-g-miercoles').value}</span></div>
-        <div class="guisado-item"><span>JUEVES ---</span> <span>${document.getElementById('in-g-jueves').value}</span></div>
-        <div class="guisado-item"><span>VIERNES ---</span> <span>${document.getElementById('in-g-viernes').value}</span></div>
-      `;
-
-      // Texto debajo de Guisados
-      document.getElementById('out-footer').innerText = document.getElementById('in-footer').value;
     }
 
-    function descargarImagen() {
-      const elemento = document.getElementById('menu-card');
-      html2canvas(elemento, { scale: 2 }).then(canvas => {
-        const enlace = document.createElement('a');
-        enlace.download = 'cooperativa_escolar.png';
-        enlace.href = canvas.toDataURL('image/png');
-        enlace.click();
-      });
-    }
+    // Guisados con estilo de puntos
+    document.getElementById('out-guisados').innerHTML = guisadosData.map(g => `
+      <div class="guisado-item"><span>${g.dia}</span><span class="dots"></span><span>${g.value}</span></div>
+    `).join('');
 
-    // Inicialización
-    generarInputsDias();
-    renderDiariamenteControls();
-    actualizar();
-  </script>
+    // Textos finales
+    document.getElementById('out-footer-infantil').innerText = document.getElementById('in-footer-infantil').value;
+    document.getElementById('out-footer-maestros').innerText = document.getElementById('in-footer-maestros').value;
+  }
+
+  // ===== DESCARGA =====
+  function descargarImagen() {
+    const elemento = document.getElementById('menu-card');
+    html2canvas(elemento, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
+      const enlace = document.createElement('a');
+      enlace.download = 'cooperativa_escolar.png';
+      enlace.href = canvas.toDataURL('image/png');
+      enlace.click();
+    });
+  }
+
+  // ===== INICIALIZACIÓN =====
+  renderDias();
+  renderGuisados();
+  renderDiariamente();
+  actualizar();
+</script>
 </body>
 </html>
