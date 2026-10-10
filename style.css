@@ -146,62 +146,6 @@ body {
 }
 
 /* ========================================================
-   BOTÓN DE MICRÓFONO
-   ======================================================== */
-.btn-microfono {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 16px;
-  margin-bottom: 12px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--primary);
-  background: var(--primary-soft);
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s, transform 0.1s;
-  font-family: inherit;
-  letter-spacing: 0.1px;
-}
-
-.btn-microfono:hover {
-  background: #fbd9e7;
-}
-
-.btn-microfono:active {
-  transform: scale(0.98);
-}
-
-.btn-microfono .icono {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--primary);
-  transition: background 0.15s;
-  flex-shrink: 0;
-}
-
-.btn-microfono.grabando {
-  background: #ffe5e5;
-  color: #d32f2f;
-}
-
-.btn-microfono.grabando .icono {
-  background: #d32f2f;
-  animation: pulso-dot 1.2s ease-in-out infinite;
-}
-
-@keyframes pulso-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%      { opacity: 0.4; transform: scale(1.4); }
-}
-
-/* ========================================================
    JERARQUÍA DE BOTONES
    ======================================================== */
 .btn-primario {
