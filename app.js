@@ -5,8 +5,6 @@ const $ = (id) => document.getElementById(id);
 
 const pantallaCaptura = $('pantalla-captura');
 const pantallaResultado = $('pantalla-resultado');
-const btnMicrofono = $('btn-microfono');
-const textoMicrofono = $('texto-microfono');
 const textoMenu = $('texto-menu');
 const btnGenerar = $('btn-generar');
 const btnVerPreview = $('btn-ver-preview');
@@ -297,141 +295,6 @@ function agregarItemDiario() {
   renderDiariamente();
   guardarEstado();
 }
-
-// ========================================================
-// DICTADO POR VOZ (arreglado para móvil)
-// ========================================================
-let dictadoActivo = false;
-let recognition = null;
-let permisoConcedido = false;
-
-// Texto que ya está confirmado (acumulado entre sesiones)
-let textoBase = '';
-// Texto final que ya llegó del reconocimiento en esta sesión
-let textoFinalSesion = '';
-// Texto provisional (interim) de la sesión actual
-let textoInterim = '';
-
-function initDictado() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    btnMicrofono.disabled = true;
-    textoMicrofono.textContent = 'Tu navegador no soporta dictado';
-    return;
-  }
-
-  recognition = new SR();
-  recognition.lang = 'es-MX';
-  recognition.continuous = false;
-  recognition.interimResults = true;
-  recognition.maxAlternatives = 1;
-
-  recognition.onstart = () => {
-    dictadoActivo = true;
-    btnMicrofono.classList.add('grabando');
-    textoMicrofono.textContent = 'Escuchando... toca para detener';
-
-    // Al iniciar, el textoBase es lo que ya había en el textarea
-    textoBase = textoMenu.value.trim();
-    if (textoBase) textoBase += ' ';
-
-    textoFinalSesion = '';
-    textoInterim = '';
-  };
-
-  recognition.onresult = (e) => {
-    let final = '';
-    let interim = '';
-
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      const txt = e.results[i][0].transcript;
-      if (e.results[i].isFinal) {
-        final += txt + ' ';
-      } else {
-        interim += txt;
-      }
-    }
-
-    // Acumulamos SOLO los finales de esta sesión
-    if (final) {
-      textoFinalSesion += final;
-      textoInterim = '';
-    } else {
-      textoInterim = interim;
-    }
-
-    // Pintamos en el textarea: base + final + interim
-    textoMenu.value = (textoBase + textoFinalSesion + textoInterim).trimStart();
-  };
-
-  recognition.onerror = (e) => {
-    console.error('Error de dictado:', e.error);
-
-    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-      permisoConcedido = false;
-      setEstadoIA('Micrófono bloqueado. Actívalo en los ajustes del navegador.', 'error');
-    } else if (e.error === 'no-speech') {
-      // Silencio: no es grave, no lo mostramos como error
-      console.warn('No se detectó voz');
-    } else if (e.error === 'aborted') {
-      // El usuario detuvo manualmente: ignorar
-      console.warn('Dictado abortado');
-    } else {
-      setEstadoIA('Error al dictar: ' + e.error, 'error');
-    }
-    // No forzamos detenerDictado() aquí, lo maneja onend
-  };
-
-  recognition.onend = () => {
-    dictadoActivo = false;
-    btnMicrofono.classList.remove('grabando');
-    textoMicrofono.textContent = 'Toca para dictar';
-
-    // Consolidamos el texto final en el textarea
-    textoMenu.value = (textoBase + textoFinalSesion).trim();
-  };
-}
-
-async function pedirPermisoMicrofono() {
-  if (!navigator.mediaDevices?.getUserMedia) return false;
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    stream.getTracks().forEach(t => t.stop());
-    return true;
-  } catch (err) {
-    if (err.name === 'NotAllowedError') {
-      setEstadoIA('Permiso denegado. Permite el micrófono en el navegador.', 'error');
-    } else if (err.name === 'NotFoundError') {
-      setEstadoIA('No se encontró ningún micrófono conectado.', 'error');
-    } else {
-      setEstadoIA('No se pudo acceder al micrófono: ' + err.message, 'error');
-    }
-    return false;
-  }
-}
-
-async function iniciarDictado() {
-  if (!recognition) return;
-  if (!permisoConcedido) {
-    const ok = await pedirPermisoMicrofono();
-    if (!ok) return;
-    permisoConcedido = true;
-  }
-  try {
-    recognition.start();
-  } catch (e) {
-    // Puede lanzar "already started" si el usuario toca rápido
-    console.warn('No se pudo iniciar dictado:', e);
-  }
-}
-
-function detenerDictado() {
-  try { recognition?.stop(); } catch (e) { console.warn(e); }
-}
-
-btnMicrofono.addEventListener('click', () => {
-  dictadoActivo ? detenerDictado() : iniciarDictado();
-});
 
 // ========================================================
 // LLAMADA A LA IA — DIRECTO A GROQ (sin backend)
@@ -871,7 +734,6 @@ btnVerPreview.addEventListener('click', () => {
 // ========================================================
 // INICIALIZACIÓN
 // ========================================================
-initDictado();
 cargarEstado();
 renderDias();
 renderGuisados();
