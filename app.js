@@ -299,12 +299,18 @@ function agregarItemDiario() {
 }
 
 // ========================================================
-// DICTADO POR VOZ
+// DICTADO POR VOZ (arreglado para móvil)
 // ========================================================
 let dictadoActivo = false;
 let recognition = null;
-let textoDictado = '';
 let permisoConcedido = false;
+
+// Texto que ya está confirmado (acumulado entre sesiones)
+let textoBase = '';
+// Texto final que ya llegó del reconocimiento en esta sesión
+let textoFinalSesion = '';
+// Texto provisional (interim) de la sesión actual
+let textoInterim = '';
 
 function initDictado() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -316,44 +322,73 @@ function initDictado() {
 
   recognition = new SR();
   recognition.lang = 'es-MX';
-  recognition.continuous = true;
+  recognition.continuous = false;
   recognition.interimResults = true;
+  recognition.maxAlternatives = 1;
 
   recognition.onstart = () => {
     dictadoActivo = true;
     btnMicrofono.classList.add('grabando');
     textoMicrofono.textContent = 'Escuchando... toca para detener';
-    textoDictado = textoMenu.value ? textoMenu.value + ' ' : '';
+
+    // Al iniciar, el textoBase es lo que ya había en el textarea
+    textoBase = textoMenu.value.trim();
+    if (textoBase) textoBase += ' ';
+
+    textoFinalSesion = '';
+    textoInterim = '';
   };
 
   recognition.onresult = (e) => {
     let final = '';
+    let interim = '';
+
     for (let i = e.resultIndex; i < e.results.length; i++) {
-      if (e.results[i].isFinal) final += e.results[i][0].transcript + ' ';
+      const txt = e.results[i][0].transcript;
+      if (e.results[i].isFinal) {
+        final += txt + ' ';
+      } else {
+        interim += txt;
+      }
     }
+
+    // Acumulamos SOLO los finales de esta sesión
     if (final) {
-      textoDictado += final;
-      textoMenu.value = textoDictado;
+      textoFinalSesion += final;
+      textoInterim = '';
+    } else {
+      textoInterim = interim;
     }
+
+    // Pintamos en el textarea: base + final + interim
+    textoMenu.value = (textoBase + textoFinalSesion + textoInterim).trimStart();
   };
 
   recognition.onerror = (e) => {
     console.error('Error de dictado:', e.error);
+
     if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
       permisoConcedido = false;
       setEstadoIA('Micrófono bloqueado. Actívalo en los ajustes del navegador.', 'error');
     } else if (e.error === 'no-speech') {
-      setEstadoIA('No se detectó voz. Intenta de nuevo.', 'error');
+      // Silencio: no es grave, no lo mostramos como error
+      console.warn('No se detectó voz');
+    } else if (e.error === 'aborted') {
+      // El usuario detuvo manualmente: ignorar
+      console.warn('Dictado abortado');
     } else {
       setEstadoIA('Error al dictar: ' + e.error, 'error');
     }
-    detenerDictado();
+    // No forzamos detenerDictado() aquí, lo maneja onend
   };
 
   recognition.onend = () => {
     dictadoActivo = false;
     btnMicrofono.classList.remove('grabando');
     textoMicrofono.textContent = 'Toca para dictar';
+
+    // Consolidamos el texto final en el textarea
+    textoMenu.value = (textoBase + textoFinalSesion).trim();
   };
 }
 
@@ -382,7 +417,12 @@ async function iniciarDictado() {
     if (!ok) return;
     permisoConcedido = true;
   }
-  try { recognition.start(); } catch (e) { console.warn(e); }
+  try {
+    recognition.start();
+  } catch (e) {
+    // Puede lanzar "already started" si el usuario toca rápido
+    console.warn('No se pudo iniciar dictado:', e);
+  }
 }
 
 function detenerDictado() {
