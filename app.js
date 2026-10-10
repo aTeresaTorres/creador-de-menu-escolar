@@ -300,7 +300,7 @@ function agregarItemDiario() {
 // LLAMADA A LA IA — DIRECTO A GROQ (sin backend)
 // ========================================================
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const MODELO = 'qwen/qwen3-32b';
+const MODELO = 'qwen/qwen3.8-27b';
 
 btnGenerar.addEventListener('click', async () => {
   const texto = textoMenu.value.trim();
