@@ -3,1532 +3,200 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Generador de Menú - Cooperativa Escolar</title>
+  <title>Generador de Menú Escolar con IA</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --color-lunes: #ffaa5b;
-      --color-martes: #8ce667;
-      --color-miercoles: #fdf063;
-      --color-jueves: #ff85cb;
-      --color-viernes: #6ee3fb;
-      --color-magenta: #e6007e;
-      --color-primary: #e6007e;
-      --color-primary-dark: #c2185b;
-      --color-primary-light: #fce4ec;
-      --color-surface: #ffffff;
-      --color-background: #f5f5f7;
-      --color-text: #1a1a1a;
-      --color-text-secondary: #5a5a5a;
-      --shadow-elevation-1: 0 2px 4px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06);
-      --shadow-elevation-2: 0 6px 16px rgba(0,0,0,0.12);
-      --shadow-elevation-3: 0 10px 30px rgba(0,0,0,0.15);
-      --radius: 16px;
-      --radius-sm: 10px;
-    }
-
-    body {
-      font-family: 'Roboto', sans-serif;
-      background-color: var(--color-background);
-      color: var(--color-text);
-      padding: 16px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .controls {
-      width: 100%;
-      max-width: 520px;
-      background: var(--color-surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-elevation-2);
-      padding: 20px 18px 28px;
-      margin-bottom: 24px;
-    }
-
-    .controls-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 18px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid var(--color-primary-light);
-    }
-
-    .controls-header h2 {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--color-primary);
-      letter-spacing: 0.3px;
-    }
-
-    .badge-count {
-      background: var(--color-primary-light);
-      color: var(--color-primary);
-      font-weight: 600;
-      font-size: 13px;
-      padding: 4px 12px;
-      border-radius: 20px;
-    }
-
-    .section-title {
-      font-weight: 600;
-      font-size: 15px;
-      color: var(--color-primary);
-      margin: 18px 0 10px 0;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .section-title::before {
-      content: '';
-      flex: 1;
-      height: 2px;
-      background: linear-gradient(90deg, var(--color-primary-light), transparent);
-      margin-left: 8px;
-    }
-
-    .form-group {
-      margin-bottom: 10px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--color-text-secondary);
-      margin-bottom: 4px;
-    }
-
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1.5px solid #e0e0e0;
-      border-radius: var(--radius-sm);
-      font-size: 14px;
-      background: #fafafa;
-      transition: border 0.2s, box-shadow 0.2s;
-      font-family: 'Roboto', sans-serif;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus {
-      outline: none;
-      border-color: var(--color-primary);
-      box-shadow: 0 0 0 3px rgba(230, 0, 126, 0.12);
-      background: #fff;
-    }
-
-    .form-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .form-row .form-group {
-      flex: 1;
-      margin-bottom: 0;
-    }
-
-    .form-row .form-group label {
-      font-size: 12px;
-    }
-
-    .form-row .form-group input {
-      padding: 8px 10px;
-      font-size: 13px;
-    }
-
-    .day-checkboxes {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 4px;
-    }
-
-    .day-checkbox {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      padding: 4px 10px;
-      border-radius: 20px;
-      border: 2px solid #e0e0e0;
-      transition: all 0.2s;
-      background: #fafafa;
-    }
-
-    .day-checkbox:hover {
-      background: #f0f0f0;
-    }
-
-    .day-checkbox input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-      accent-color: var(--color-primary);
-      cursor: pointer;
-    }
-
-    .day-checkbox.active-lunes { border-color: var(--color-lunes); background: #fff5e8; }
-    .day-checkbox.active-martes { border-color: var(--color-martes); background: #eaf8e0; }
-    .day-checkbox.active-miercoles { border-color: var(--color-miercoles); background: #fefce0; }
-    .day-checkbox.active-jueves { border-color: var(--color-jueves); background: #ffe8f5; }
-    .day-checkbox.active-viernes { border-color: var(--color-viernes); background: #e8f8fe; }
-
-    .day-group-title {
-      font-weight: 600;
-      font-size: 14px;
-      padding: 6px 12px;
-      border-radius: 8px;
-      margin: 12px 0 8px 0;
-      display: inline-block;
-    }
-
-    .title-lunes { background: #fff0e0; color: #b85e00; }
-    .title-martes { background: #e6f8db; color: #2d7a12; }
-    .title-miercoles { background: #fefae0; color: #7a7000; }
-    .title-jueves { background: #ffe0f2; color: #a01068; }
-    .title-viernes { background: #ddf7fe; color: #006688; }
-
-    .day-hidden {
-      display: none !important;
-    }
-
-    .items-container {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 6px;
-      min-height: 40px;
-    }
-
-    .item-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #f8f8fa;
-      padding: 6px 10px 6px 8px;
-      border-radius: var(--radius-sm);
-      border: 1px solid #ececec;
-      transition: background 0.15s, border-color 0.2s;
-      cursor: grab;
-      user-select: none;
-    }
-
-    .item-row:active {
-      cursor: grabbing;
-    }
-
-    .item-row.dragging {
-      opacity: 0.4;
-      border-color: var(--color-primary);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    .item-row.drag-over {
-      border-color: var(--color-primary);
-      background: var(--color-primary-light);
-      border-style: dashed;
-      border-width: 2px;
-    }
-
-    .item-row:hover {
-      background: #f0f0f4;
-    }
-
-    .drag-handle {
-      color: #aaa;
-      font-size: 16px;
-      cursor: grab;
-      padding: 0 2px;
-      flex-shrink: 0;
-      letter-spacing: -2px;
-      user-select: none;
-    }
-
-    .item-row:active .drag-handle {
-      cursor: grabbing;
-    }
-
-    .item-row input[type="text"] {
-      flex: 1;
-      padding: 7px 10px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 13px;
-      background: #fff;
-      min-width: 0;
-    }
-
-    .item-row input[type="text"]:focus {
-      border-color: var(--color-primary);
-      box-shadow: 0 0 0 2px rgba(230, 0, 126, 0.1);
-      outline: none;
-    }
-
-    .item-row input.price-input {
-      width: 70px;
-      flex: 0 0 70px;
-    }
-
-    .item-row .checkbox-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      flex-shrink: 0;
-    }
-
-    .item-row input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      accent-color: var(--color-primary);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .btn {
-      background: var(--color-primary);
-      color: white;
-      border: none;
-      border-radius: var(--radius-sm);
-      padding: 12px 16px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
-      font-family: 'Roboto', sans-serif;
-      width: 100%;
-      margin-top: 12px;
-      box-shadow: 0 2px 6px rgba(230, 0, 126, 0.25);
-    }
-
-    .btn:active {
-      transform: scale(0.97);
-    }
-
-    .btn:hover {
-      background: var(--color-primary-dark);
-      box-shadow: 0 4px 12px rgba(230, 0, 126, 0.3);
-    }
-
-    .btn-remove {
-      background: transparent;
-      color: #999;
-      border: none;
-      font-size: 18px;
-      cursor: pointer;
-      padding: 0 4px;
-      line-height: 1;
-      font-weight: 300;
-      flex-shrink: 0;
-    }
-
-    .btn-remove:hover {
-      color: #d32f2f;
-    }
-
-    .add-row-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: transparent;
-      border: 1.5px dashed #ccc;
-      border-radius: var(--radius-sm);
-      padding: 8px 12px;
-      font-size: 13px;
-      color: var(--color-text-secondary);
-      cursor: pointer;
-      width: 100%;
-      justify-content: center;
-      font-weight: 500;
-      transition: border 0.2s, color 0.2s;
-      margin-top: 4px;
-      font-family: 'Roboto', sans-serif;
-    }
-
-    .add-row-btn:hover {
-      border-color: var(--color-primary);
-      color: var(--color-primary);
-    }
-
-    .canvas-wrapper {
-      width: 100%;
-      max-width: 520px;
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
-      align-items: center;
-    }
-
-    .canvas-container {
-      background: white;
-      width: 100%;
-      max-width: 480px;
-      padding: 24px 20px 28px;
-      box-sizing: border-box;
-      box-shadow: var(--shadow-elevation-3);
-      border-radius: var(--radius);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 8px;
-    }
-
-    .institution-info {
-      color: var(--color-magenta);
-      font-weight: 700;
-      line-height: 1.15;
-    }
-
-    .inst-line1 { font-size: 18px; }
-    .inst-line2 { font-size: 20px; }
-
-    .date-box {
-      text-align: right;
-      font-size: 11px;
-      font-weight: 600;
-      color: #222;
-      line-height: 1.3;
-    }
-
-    .date-box .subtitle {
-      color: var(--color-magenta);
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-
-    .main-title {
-      text-align: center;
-      font-size: 22px;
-      font-weight: 900;
-      letter-spacing: 0.5px;
-      color: #111;
-      margin: 8px 0 14px 0;
-      font-family: 'Roboto', sans-serif;
-    }
-
-    .content-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .left-column, .right-column {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .menu-card {
-      border: 2px solid;
-      border-radius: 16px;
-      padding: 8px 12px 10px;
-      background: #fff;
-    }
-
-    .card-title {
-      text-align: center;
-      font-weight: 700;
-      font-size: 13px;
-      letter-spacing: 0.3px;
-      margin-bottom: 6px;
-    }
-
-    .menu-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      font-size: 9px;
-      font-weight: 600;
-      color: #222;
-    }
-
-    .menu-item {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 3px;
-      text-transform: uppercase;
-      font-size: 9px;
-      line-height: 1.3;
-    }
-
-    .menu-item .dots {
-      flex: 1;
-      border-bottom: 1px dashed #bbb;
-      margin: 0 4px 2px 4px;
-    }
-
-    .card-lunes { border-color: var(--color-lunes); }
-    .card-martes { border-color: var(--color-martes); }
-    .card-miercoles { border-color: var(--color-miercoles); }
-    .card-jueves { border-color: var(--color-jueves); }
-    .card-viernes { border-color: var(--color-viernes); }
-    .card-magenta { border-color: var(--color-magenta); }
-
-    .guisado-item {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 3px;
-      font-size: 9px;
-      font-weight: 600;
-      text-transform: uppercase;
-      line-height: 1.3;
-    }
-
-    .guisado-item .dots {
-      flex: 1;
-      border-bottom: 1px dashed #bbb;
-      margin: 0 4px 2px 4px;
-    }
-
-    .footer-text {
-      text-align: center;
-      font-size: 13px;
-      font-weight: 700;
-      color: #111;
-      margin-top: 8px;
-      line-height: 1.5;
-    }
-
-    .custom-school-input {
-      margin-top: 6px;
-    }
-
-    .custom-school-input input {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1.5px dashed #ccc;
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      background: #fafafa;
-      transition: border 0.2s;
-      font-family: 'Roboto', sans-serif;
-    }
-
-    .custom-school-input input:focus {
-      outline: none;
-      border-color: var(--color-primary);
-      border-style: solid;
-      box-shadow: 0 0 0 2px rgba(230, 0, 126, 0.1);
-    }
-
-    /* Estilos para menú del día individual */
-    .day-menu-container {
-      background: white;
-      width: 100%;
-      max-width: 480px;
-      padding: 30px 25px 35px;
-      box-sizing: border-box;
-      box-shadow: var(--shadow-elevation-3);
-      border-radius: var(--radius);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .day-menu-title {
-      text-align: center;
-      font-size: 28px;
-      font-weight: 900;
-      color: var(--color-primary);
-      letter-spacing: 2px;
-      margin-bottom: 20px;
-      font-family: 'Roboto', sans-serif;
-      text-transform: uppercase;
-    }
-
-    .day-menu-items {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 20px 0;
-    }
-
-    .day-menu-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 2px solid #f0f0f0;
-      font-size: 16px;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: #222;
-    }
-
-    .day-menu-item:last-child {
-      border-bottom: none;
-    }
-
-    .day-menu-item .item-name {
-      flex: 1;
-    }
-
-    .day-menu-item .item-price {
-      font-weight: 700;
-      color: var(--color-primary);
-      margin-left: 20px;
-      white-space: nowrap;
-    }
-
-    .day-menu-guisado {
-      background: var(--color-primary-light);
-      border-radius: 12px;
-      padding: 12px 18px;
-      margin: 10px 0 18px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .day-menu-guisado .label {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--color-primary);
-      text-transform: uppercase;
-    }
-
-    .day-menu-guisado .value {
-      font-size: 16px;
-      font-weight: 700;
-      color: #222;
-      text-transform: uppercase;
-    }
-
-    .day-menu-precios {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      padding: 12px 0;
-      margin: 5px 0 0 0;
-      border-top: 2px solid #eee;
-    }
-
-    .day-menu-precios .precio-line {
-      text-align: center;
-      font-size: 15px;
-      font-weight: 700;
-      color: #333;
-    }
-
-    .day-menu-precios .precio-line.infantil {
-      color: var(--color-primary);
-    }
-
-    .day-menu-precios .precio-line.maestros {
-      color: #555;
-      font-size: 14px;
-    }
-
-    /* Estilos para el canvas de Diariamente */
-    .diario-only-container {
-      background: white;
-      width: 100%;
-      max-width: 480px;
-      padding: 25px 25px 30px;
-      box-sizing: border-box;
-      box-shadow: var(--shadow-elevation-3);
-      border-radius: var(--radius);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .diario-only-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--color-magenta);
-      text-align: center;
-      margin-bottom: 15px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .diario-only-items {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .diario-only-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      font-size: 14px;
-      font-weight: 500;
-      text-transform: uppercase;
-      border-bottom: 1px dashed #eee;
-    }
-
-    .diario-only-item:last-child {
-      border-bottom: none;
-    }
-
-    .diario-only-item .price {
-      font-weight: 700;
-      color: var(--color-primary);
-    }
-
-    .canvas-divider {
-      width: 100%;
-      max-width: 480px;
-      text-align: center;
-      color: #aaa;
-      font-size: 12px;
-      font-weight: 500;
-      padding: 10px 0;
-      border-top: 2px dashed #ddd;
-      border-bottom: 2px dashed #ddd;
-    }
-
-    .canvas-divider span {
-      background: var(--color-background);
-      padding: 0 15px;
-    }
-
-    .btn-wrapper {
-      width: 100%;
-      max-width: 480px;
-    }
-
-    @media (max-width: 480px) {
-      .controls { padding: 16px 14px 20px; }
-      .canvas-container { padding: 18px 14px 20px; }
-      .day-menu-container { padding: 20px 16px 25px; }
-      .diario-only-container { padding: 20px 16px 25px; }
-      .content-grid { gap: 10px; }
-      .menu-card { padding: 6px 8px 8px; }
-      .menu-item { font-size: 8px; }
-      .guisado-item { font-size: 8px; }
-      .card-title { font-size: 11px; }
-      .inst-line1 { font-size: 15px; }
-      .inst-line2 { font-size: 17px; }
-      .main-title { font-size: 18px; }
-      .footer-text { font-size: 11px; }
-      .item-row input[type="text"] { font-size: 12px; padding: 6px 8px; }
-      .item-row .price-input { width: 60px; flex: 0 0 60px; }
-      .form-row { flex-direction: column; gap: 6px; }
-      .day-checkboxes { gap: 4px; }
-      .day-checkbox { font-size: 12px; padding: 3px 8px; }
-      .day-menu-title { font-size: 22px; }
-      .day-menu-item { font-size: 14px; padding: 8px 0; }
-      .day-menu-guisado .value { font-size: 14px; }
-      .day-menu-precios .precio-line { font-size: 13px; }
-      .diario-only-item { font-size: 12px; }
-    }
-
-    @media (min-width: 768px) {
-      body { padding: 32px; }
-      .controls { max-width: 580px; }
-      .canvas-container { max-width: 520px; }
-      .day-menu-container { max-width: 520px; }
-      .diario-only-container { max-width: 520px; }
-      .btn-wrapper { max-width: 520px; }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="controls">
-  <div class="controls-header">
-    <h2>🍽️ Configurar Menú</h2>
-    <span class="badge-count">Edición</span>
-  </div>
+<!-- ============================= -->
+<!-- BARRA SUPERIOR CON API KEY    -->
+<!-- ============================= -->
+<div class="api-bar">
+  <button id="btn-api-toggle" class="btn-api-toggle" type="button" title="Configurar API Key">
+    🔑
+    <span id="api-status-dot" class="api-dot api-dot-off"></span>
+  </button>
 
-  <div class="section-title">Encabezado</div>
-  <div class="form-group">
-    <label>Línea 1 (ej. Primaria)</label>
-    <input type="text" id="in-linea1" value="Primaria" oninput="actualizarTodo()">
+  <div id="api-panel" class="api-panel" hidden>
+    <div class="api-panel-header">
+      <span>Configurar API Key de Groq</span>
+      <button id="btn-api-close" class="api-close" type="button" aria-label="Cerrar">✕</button>
+    </div>
+
+    <p class="api-help">
+      Pega tu API Key de Groq (empieza con <code>gsk_</code>).
+      Se guarda solo en tu navegador.
+      <a href="https://console.groq.com/keys" target="_blank" rel="noopener">Obtener una</a>
+    </p>
+
+    <div class="api-input-row">
+      <input
+        type="password"
+        id="in-api-key"
+        class="input api-input"
+        placeholder="gsk_..."
+        autocomplete="off"
+        spellcheck="false"
+      >
+      <button id="btn-api-toggle-visibility" class="btn-eye" type="button" title="Mostrar/ocultar">👁</button>
+    </div>
+
+    <div class="api-actions">
+      <button id="btn-api-save" class="btn-primario api-btn-save" type="button">Guardar</button>
+      <button id="btn-api-clear" class="btn-secundario api-btn-clear" type="button">Borrar</button>
+    </div>
+
+    <div id="api-feedback" class="api-feedback"></div>
   </div>
-  <div class="form-group">
-    <label>Línea 2 (Escuela)</label>
-    <select id="in-linea2" onchange="handleSchoolChange()">
+</div>
+
+<header class="hero">
+  <h1>Menú Escolar</h1>
+  <p>Dicta o escribe el menú y la IA lo organiza por ti</p>
+</header>
+
+<!-- ============================= -->
+<!-- CAPTURA + EDICIÓN             -->
+<!-- ============================= -->
+<main id="pantalla-captura" class="pantalla">
+
+  <section class="card">
+    <label class="field-label">Línea 1</label>
+    <input type="text" id="in-linea1" class="input" value="Primaria">
+
+    <label class="field-label" style="margin-top:14px;">Escuela</label>
+    <select id="in-linea2" class="input">
       <option value="Niños Héroes">Niños Héroes</option>
       <option value="Emiliano Zapata T.V.">Emiliano Zapata T.V.</option>
       <option value="J. Jesús Ventura T.M.">J. Jesús Ventura T.M.</option>
       <option value="Heliodoro Silva Palacios T.M.">Heliodoro Silva Palacios T.M.</option>
       <option value="Carmen Serdán T.M.">Carmen Serdán T.M.</option>
-      <option value="__custom__">✏️ Otra (personalizada)</option>
     </select>
-  </div>
-  <div class="custom-school-input" id="custom-school-container" style="display:none;">
-    <input type="text" id="in-linea2-custom" placeholder="Escribe el nombre de la escuela..." oninput="actualizarTodo()">
-  </div>
+  </section>
 
-  <div class="section-title">Fechas y días</div>
-  <div class="form-row">
-    <div class="form-group">
-      <label>Fecha de inicio</label>
-      <input type="date" id="in-fecha-inicio" oninput="actualizarFechas()">
-    </div>
-    <div class="form-group">
-      <label>Fecha de fin</label>
-      <input type="date" id="in-fecha-fin" oninput="actualizarFechas()">
-    </div>
-  </div>
+  <section class="card">
+    <div class="card-header">Generar días con IA</div>
 
-  <div class="form-group">
-    <label>Días a mostrar</label>
-    <div class="day-checkboxes" id="day-checkboxes">
-      <label class="day-checkbox active-lunes">
-        <input type="checkbox" value="lunes" checked onchange="toggleDia('lunes')"> Lun
-      </label>
-      <label class="day-checkbox active-martes">
-        <input type="checkbox" value="martes" checked onchange="toggleDia('martes')"> Mar
-      </label>
-      <label class="day-checkbox active-miercoles">
-        <input type="checkbox" value="miercoles" checked onchange="toggleDia('miercoles')"> Mié
-      </label>
-      <label class="day-checkbox active-jueves">
-        <input type="checkbox" value="jueves" checked onchange="toggleDia('jueves')"> Jue
-      </label>
-      <label class="day-checkbox active-viernes">
-        <input type="checkbox" value="viernes" checked onchange="toggleDia('viernes')"> Vie
-      </label>
-    </div>
-  </div>
+    <button id="btn-microfono" class="btn-microfono" type="button">
+      <span class="icono"></span>
+      <span id="texto-microfono">Toca para dictar</span>
+    </button>
 
-  <div class="section-title">Comidas por día</div>
-  <div id="dias-container"></div>
+    <textarea
+      id="texto-menu"
+      class="textarea"
+      rows="5"
+      placeholder="Ejemplo: El lunes tacos a 25 y tortas a 20. El martes enchiladas a 30. De guisado el lunes picadillo..."
+    ></textarea>
 
-  <div class="section-title">Guisados del día</div>
-  <div id="guisados-container"></div>
+    <button id="btn-generar" class="btn-primario" type="button">
+      Aplicar a los días
+    </button>
 
-  <div class="section-title">Diariamente</div>
-  <div id="diariamente-container"></div>
-  <button class="add-row-btn" onclick="agregarItemDiario()">+ Agregar producto</button>
+    <div id="estado-ia" class="estado"></div>
+  </section>
 
-  <div class="section-title">Textos finales</div>
-  <div class="form-group">
-    <label>Porción infantil</label>
-    <input type="text" id="in-footer-infantil" value="Porción infantil $35" oninput="actualizarTodo()">
-  </div>
-  <div class="form-group">
-    <label>Porción maestros</label>
-    <input type="text" id="in-footer-maestros" value="Porción maestros $55" oninput="actualizarTodo()">
-  </div>
-</div>
+  <section class="card">
+    <div class="card-header">Comidas por día</div>
+    <div id="dias-container"></div>
+  </section>
 
-<!-- CANVAS WRAPPER -->
-<div class="canvas-wrapper" id="canvas-wrapper">
-  <!-- Menú Semanal -->
-  <div class="canvas-container" id="menu-card">
-    <div class="header">
-      <div class="institution-info">
-        <div class="inst-line1" id="out-linea1">Primaria</div>
-        <div class="inst-line2" id="out-linea2">Niños Héroes</div>
-      </div>
-      <div class="date-box">
-        <div class="subtitle">SEMANA DEL</div>
-        <span id="out-semana">31 DE AGOSTO<br>AL 4 DE SEPTIEMBRE</span>
-      </div>
-    </div>
+  <section class="card">
+    <div class="card-header">Guisados del día</div>
+    <div id="guisados-container"></div>
+  </section>
 
-    <div class="main-title">COOPERATIVA ESCOLAR</div>
+  <section class="card">
+    <div class="card-header">Diariamente</div>
+    <div id="diariamente-container"></div>
+    <button class="add-row-btn" type="button" onclick="agregarItemDiario()">+ Agregar producto</button>
+  </section>
 
-    <div class="content-grid">
-      <div class="left-column" id="dias-render"></div>
-      <div class="right-column">
-        <div class="menu-card card-magenta">
-          <div class="card-title">DIARIAMENTE</div>
-          <div class="menu-list" id="out-diariamente"></div>
+  <section class="card">
+    <div class="card-header">Textos finales</div>
+
+    <label class="field-label">Porción infantil</label>
+    <input type="text" id="in-footer-infantil" class="input" value="Porción infantil $35">
+
+    <label class="field-label" style="margin-top:14px;">Porción maestros</label>
+    <input type="text" id="in-footer-maestros" class="input" value="Porción maestros $55">
+  </section>
+
+  <button id="btn-ver-preview" class="btn-primario" type="button">
+    Ver menú completo
+  </button>
+
+</main>
+
+<!-- ============================= -->
+<!-- VISTA PREVIA (misma página)   -->
+<!-- ============================= -->
+<main id="pantalla-resultado" class="pantalla">
+
+  <header class="hero">
+    <div class="card-header"></div>
+    <h1>Vista previa</h1>
+    <p>Descarga el menú semanal, cada día o la sección de diariamente</p>
+  </header>
+
+  <div class="canvas-wrapper">
+    <div class="canvas-container" id="menu-card">
+      <div class="header">
+        <div class="institution-info">
+          <div class="inst-line1" id="out-linea1">Primaria</div>
+          <div class="inst-line2" id="out-linea2">Niños Héroes</div>
         </div>
-        <div>
-          <div class="menu-card card-magenta">
-            <div class="card-title">GUISADOS</div>
-            <div class="menu-list" id="out-guisados"></div>
+        <div class="date-box">
+          <div class="subtitle">MENÚ</div>
+          <span>SEMANAL</span>
+        </div>
+      </div>
+
+      <div class="main-title">COOPERATIVA ESCOLAR</div>
+
+      <div class="content-grid">
+        <div class="left-column" id="dias-render"></div>
+        <div class="right-column">
+          <div class="menu-card card-magenta" id="card-diariamente">
+            <div class="card-title">DIARIAMENTE</div>
+            <div class="menu-list" id="out-diariamente"></div>
           </div>
-          <div class="footer-text" id="out-footer-infantil">Porción infantil $35</div>
-          <div class="footer-text" id="out-footer-maestros" style="font-size:12px; color:#555; margin-top:2px;">Porción maestros $55</div>
+          <div id="card-guisados-wrap">
+            <div class="menu-card card-magenta" id="card-guisados">
+              <div class="card-title">GUISADOS</div>
+              <div class="menu-list" id="out-guisados"></div>
+            </div>
+            <div class="footer-text" id="out-footer-infantil">Porción infantil $35</div>
+            <div class="footer-text" id="out-footer-maestros" style="font-size:12px; color:#555; margin-top:2px;">Porción maestros $55</div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  
-  <!-- Botón de descarga del menú semanal FUERA del canvas -->
-  <div class="btn-wrapper">
-    <button class="btn" onclick="descargarImagen('menu-card', 'menu_semanal.png')">📥 Descargar Menú Semanal</button>
+    <div class="btn-wrapper">
+      <button class="btn-descarga" onclick="descargarImagen('menu-card', 'menu_semanal.png')">Descargar menú semanal</button>
+    </div>
   </div>
 
-  <!-- Separador -->
-  <div class="canvas-divider"><span>MENÚS POR DÍA</span></div>
+  <div class="canvas-divider"><span>Menús por día</span></div>
 
-  <!-- Menús por día -->
   <div id="day-menus-container"></div>
 
-  <!-- Separador -->
-  <div class="canvas-divider"><span>DIARIAMENTE</span></div>
+  <div class="canvas-divider" id="divider-diario"><span>Diariamente</span></div>
 
-  <!-- Canvas solo de Diariamente -->
   <div id="diario-only-container">
     <div class="diario-only-container" id="diario-only-canvas">
       <div class="diario-only-title">DIARIAMENTE</div>
       <div class="diario-only-items" id="diario-only-items"></div>
     </div>
     <div class="btn-wrapper">
-      <button class="btn" onclick="descargarImagen('diario-only-canvas', 'diariamente.png')">📥 Descargar Diariamente</button>
+      <button class="btn-descarga" onclick="descargarImagen('diario-only-canvas', 'diariamente.png')">Descargar diariamente</button>
     </div>
   </div>
-</div>
 
-<script>
-  // ===== ESTRUCTURA DE DATOS =====
-  const diasData = {
-    lunes: { label: 'LUNES', cls: 'card-lunes', titleCls: 'title-lunes', items: [] },
-    martes: { label: 'MARTES', cls: 'card-martes', titleCls: 'title-martes', items: [] },
-    miercoles: { label: 'MIÉRCOLES', cls: 'card-miercoles', titleCls: 'title-miercoles', items: [] },
-    jueves: { label: 'JUEVES', cls: 'card-jueves', titleCls: 'title-jueves', items: [] },
-    viernes: { label: 'VIERNES', cls: 'card-viernes', titleCls: 'title-viernes', items: [] }
-  };
+</main>
 
-  const initialData = {
-    lunes: [
-      { nombre: 'TACOS TUXPEÑOS', precio: '3 X $25', activo: true },
-      { nombre: 'TORTAS', precio: '$20', activo: true },
-      { nombre: 'ESPAGUETTI CON SALCHICHA', precio: '$25', activo: true },
-      { nombre: 'PACHUCOS', precio: '$20', activo: true },
-      { nombre: 'AGUA DE LIMÓN CON CHÍA', precio: '$10', activo: true }
-    ],
-    martes: [
-      { nombre: 'ENCHILADAS', precio: '$30', activo: true },
-      { nombre: 'MOLLETES', precio: '$22', activo: true },
-      { nombre: 'SOPA DE FIDEO', precio: '$18', activo: true },
-      { nombre: 'QUESADILLAS', precio: '$20', activo: true },
-      { nombre: 'AGUA DE PIÑA', precio: '$10', activo: true }
-    ],
-    miercoles: [
-      { nombre: 'CHILAQUILES', precio: '$28', activo: true },
-      { nombre: 'SINCRONIZADAS', precio: '$20', activo: true },
-      { nombre: 'ARROZ CON HUEVO', precio: '$22', activo: true },
-      { nombre: 'BURRITOS', precio: '$25', activo: true },
-      { nombre: 'AGUA DE JAMAICA', precio: '$10', activo: true }
-    ],
-    jueves: [
-      { nombre: 'FLAUTAS DE POLLO', precio: '$30', activo: true },
-      { nombre: 'HAMBURGUESA', precio: '$35', activo: true },
-      { nombre: 'HOT DOGS', precio: '$20', activo: true },
-      { nombre: 'NUGGETS DE POLLO', precio: '$25', activo: true },
-      { nombre: 'AGUA DE PEPINO CON LIMÓN', precio: '$10', activo: true }
-    ],
-    viernes: [
-      { nombre: 'PIZZA INDIVIDUAL', precio: '$30', activo: true },
-      { nombre: 'TACOS DE CARNE', precio: '$35', activo: true },
-      { nombre: 'SOPES DE CHORIZO', precio: '$25', activo: true },
-      { nombre: 'TORTA DE JAMÓN', precio: '$20', activo: true },
-      { nombre: 'AGUA DE HORCHATA', precio: '$10', activo: true }
-    ]
-  };
-
-  for (const [key, data] of Object.entries(initialData)) {
-    diasData[key].items = data.map(item => ({ ...item }));
-  }
-
-  const guisadosMap = {
-    lunes: 'PICADILLO',
-    martes: 'TACOS DE PAPA',
-    miercoles: 'POLLO AL CHIPOTLE',
-    jueves: 'ALBÓNDIGAS',
-    viernes: 'TACOS DE CARNE ASADA'
-  };
-
-  let guisadosData = Object.entries(guisadosMap).map(([key, value]) => ({
-    dia: diasData[key].label,
-    key: key,
-    value: value
-  }));
-
-  let diariamenteItems = [
-    { nombre: 'GELATINAS', precio: '$10', activo: true },
-    { nombre: 'FLAN', precio: '$12', activo: true },
-    { nombre: 'PALOMITAS', precio: '$10', activo: true },
-    { nombre: 'CARLOTAS', precio: '$15', activo: true },
-    { nombre: 'CACAHUATES', precio: '$10', activo: true },
-    { nombre: 'AGUA NATURAL', precio: '$15', activo: true },
-    { nombre: 'CHOCOMILK', precio: '$15', activo: true },
-    { nombre: 'GALLETA DE AVENA', precio: '$13', activo: true },
-    { nombre: 'GALLETA DE NUÉZ', precio: '$10', activo: true },
-    { nombre: 'CHOCOBANANA', precio: '$10', activo: true },
-    { nombre: 'HIELITOS', precio: '$10', activo: true },
-    { nombre: 'YOGURT CON FRUTA', precio: '$15', activo: true },
-    { nombre: 'FRUTA PICADA', precio: '$12', activo: true },
-    { nombre: 'ARRÓZ CON LECHE', precio: '$15', activo: true }
-  ];
-
-  let diasActivos = {
-    lunes: true,
-    martes: true,
-    miercoles: true,
-    jueves: true,
-    viernes: true
-  };
-
-  // ===== FUNCIONES DE ESCUELA =====
-  function handleSchoolChange() {
-    const select = document.getElementById('in-linea2');
-    const customContainer = document.getElementById('custom-school-container');
-    const customInput = document.getElementById('in-linea2-custom');
-    
-    if (select.value === '__custom__') {
-      customContainer.style.display = 'block';
-      customInput.focus();
-      actualizarTodo();
-    } else {
-      customContainer.style.display = 'none';
-      actualizarTodo();
-    }
-  }
-
-  function getSchoolName() {
-    const select = document.getElementById('in-linea2');
-    if (select.value === '__custom__') {
-      return document.getElementById('in-linea2-custom').value || 'Escuela';
-    }
-    return select.value;
-  }
-
-  // ===== FUNCIONES DE FECHAS =====
-  function getNextMonday() {
-    const today = new Date();
-    const dayOfWeek = today.getDay();
-    const daysUntilMonday = (dayOfWeek === 0) ? 1 : 8 - dayOfWeek;
-    const monday = new Date(today);
-    monday.setDate(today.getDate() + daysUntilMonday);
-    return monday;
-  }
-
-  function formatDate(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
-  function formatDateDisplay(date) {
-    const months = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 
-                    'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    return `${day} DE ${month}`;
-  }
-
-  function initDates() {
-    const monday = getNextMonday();
-    const friday = new Date(monday);
-    friday.setDate(monday.getDate() + 4);
-    
-    document.getElementById('in-fecha-inicio').value = formatDate(monday);
-    document.getElementById('in-fecha-fin').value = formatDate(friday);
-    actualizarFechas();
-  }
-
-  function actualizarFechas() {
-    const inicio = document.getElementById('in-fecha-inicio').value;
-    const fin = document.getElementById('in-fecha-fin').value;
-    
-    if (inicio && fin) {
-      const dateInicio = new Date(inicio + 'T00:00:00');
-      const dateFin = new Date(fin + 'T00:00:00');
-      const fechaInicioStr = formatDateDisplay(dateInicio);
-      const fechaFinStr = formatDateDisplay(dateFin);
-      document.getElementById('out-semana').innerHTML = `${fechaInicioStr}<br>AL ${fechaFinStr}`;
-    }
-    actualizarTodo();
-  }
-
-  // ===== TOGGLE DÍAS =====
-  function toggleDia(dia) {
-    const checkbox = document.querySelector(`input[value="${dia}"]`);
-    diasActivos[dia] = checkbox.checked;
-    
-    const label = checkbox.closest('.day-checkbox');
-    if (checkbox.checked) {
-      label.classList.add(`active-${dia}`);
-    } else {
-      label.classList.remove(`active-${dia}`);
-    }
-    
-    const dayContainer = document.getElementById(`dia-${dia}`);
-    if (dayContainer) {
-      if (checkbox.checked) {
-        dayContainer.classList.remove('day-hidden');
-      } else {
-        dayContainer.classList.add('day-hidden');
-      }
-    }
-    
-    actualizarTodo();
-  }
-
-  // ===== DRAG & DROP =====
-  function initDragAndDrop() {
-    document.querySelectorAll('.items-container').forEach(container => {
-      container.removeEventListener('dragstart', handleDragStart);
-      container.removeEventListener('dragend', handleDragEnd);
-      container.removeEventListener('dragover', handleDragOver);
-      container.removeEventListener('dragenter', handleDragEnter);
-      container.removeEventListener('dragleave', handleDragLeave);
-      container.removeEventListener('drop', handleDrop);
-      
-      container.addEventListener('dragstart', handleDragStart);
-      container.addEventListener('dragend', handleDragEnd);
-      container.addEventListener('dragover', handleDragOver);
-      container.addEventListener('dragenter', handleDragEnter);
-      container.addEventListener('dragleave', handleDragLeave);
-      container.addEventListener('drop', handleDrop);
-    });
-  }
-
-  function handleDragStart(e) {
-    const row = e.target.closest('.item-row');
-    if (!row) return;
-    const container = row.closest('.items-container');
-    if (!container) return;
-    
-    const sourceKey = container.dataset.key;
-    const sourceType = container.dataset.type;
-    const index = Array.from(container.children).indexOf(row);
-    
-    row.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', `${sourceType}|${sourceKey}|${index}`);
-  }
-
-  function handleDragEnd(e) {
-    const row = e.target.closest('.item-row');
-    if (row) row.classList.remove('dragging');
-    document.querySelectorAll('.item-row.drag-over').forEach(el => el.classList.remove('drag-over'));
-  }
-
-  function handleDragOver(e) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  }
-
-  function handleDragEnter(e) {
-    e.preventDefault();
-    const row = e.target.closest('.item-row');
-    if (row) row.classList.add('drag-over');
-  }
-
-  function handleDragLeave(e) {
-    const row = e.target.closest('.item-row');
-    if (row) row.classList.remove('drag-over');
-  }
-
-  function handleDrop(e) {
-    e.preventDefault();
-    const targetRow = e.target.closest('.item-row');
-    if (!targetRow) return;
-    
-    const targetContainer = targetRow.closest('.items-container');
-    if (!targetContainer) return;
-    
-    const targetKey = targetContainer.dataset.key;
-    const targetType = targetContainer.dataset.type;
-    const targetIndex = Array.from(targetContainer.children).indexOf(targetRow);
-    
-    const data = e.dataTransfer.getData('text/plain');
-    if (!data) return;
-    
-    const [sourceType, sourceKey, sourceIndexStr] = data.split('|');
-    const sourceIndex = parseInt(sourceIndexStr);
-    
-    if (!sourceType || !sourceKey || isNaN(sourceIndex)) return;
-    
-    if (sourceType === targetType && sourceKey === targetKey && sourceIndex === targetIndex) {
-      targetRow.classList.remove('drag-over');
-      return;
-    }
-    
-    if (sourceType === 'dia' && targetType === 'dia') {
-      moveDiaItem(sourceKey, sourceIndex, targetKey, targetIndex);
-    } else if (sourceType === 'diario' && targetType === 'diario') {
-      moveDiarioItem(sourceIndex, targetIndex);
-    }
-    
-    targetRow.classList.remove('drag-over');
-  }
-
-  function moveDiaItem(sourceKey, sourceIndex, targetKey, targetIndex) {
-    const sourceItems = diasData[sourceKey].items;
-    const targetItems = diasData[targetKey].items;
-    
-    if (sourceKey === targetKey) {
-      const [item] = sourceItems.splice(sourceIndex, 1);
-      sourceItems.splice(targetIndex, 0, item);
-    } else {
-      const [item] = sourceItems.splice(sourceIndex, 1);
-      targetItems.splice(targetIndex, 0, item);
-    }
-    
-    renderDiaItems(sourceKey);
-    if (sourceKey !== targetKey) {
-      renderDiaItems(targetKey);
-    }
-    actualizarTodo();
-    initDragAndDrop();
-  }
-
-  function moveDiarioItem(sourceIndex, targetIndex) {
-    const [item] = diariamenteItems.splice(sourceIndex, 1);
-    diariamenteItems.splice(targetIndex, 0, item);
-    renderDiariamente();
-    actualizarTodo();
-    initDragAndDrop();
-  }
-
-  // ===== RENDER CONTROLES =====
-  function renderDias() {
-    const container = document.getElementById('dias-container');
-    container.innerHTML = '';
-    const diasKeys = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes'];
-    diasKeys.forEach(key => {
-      const dia = diasData[key];
-      const div = document.createElement('div');
-      div.id = `dia-${key}`;
-      if (!diasActivos[key]) {
-        div.classList.add('day-hidden');
-      }
-      div.innerHTML = `
-        <div class="day-group-title ${dia.titleCls}">${dia.label}</div>
-        <div class="items-container" id="items-${key}" data-key="${key}" data-type="dia"></div>
-        <button class="add-row-btn" onclick="agregarItemDia('${key}')">+ Agregar platillo</button>
-      `;
-      container.appendChild(div);
-      renderDiaItems(key);
-    });
-    initDragAndDrop();
-  }
-
-  function renderDiaItems(key) {
-    const container = document.getElementById(`items-${key}`);
-    if (!container) return;
-    container.innerHTML = '';
-    const dia = diasData[key];
-    dia.items.forEach((item, idx) => {
-      const row = document.createElement('div');
-      row.className = 'item-row';
-      row.draggable = true;
-      row.innerHTML = `
-        <span class="drag-handle">⠿</span>
-        <div class="checkbox-wrap">
-          <input type="checkbox" ${item.activo ? 'checked' : ''} onchange="toggleDiaItem('${key}', ${idx})">
-        </div>
-        <input type="text" value="${item.nombre}" oninput="updateDiaItem('${key}', ${idx}, 'nombre', this.value)">
-        <input type="text" class="price-input" value="${item.precio}" oninput="updateDiaItem('${key}', ${idx}, 'precio', this.value)">
-        <button class="btn-remove" onclick="eliminarDiaItem('${key}', ${idx})">✕</button>
-      `;
-      container.appendChild(row);
-    });
-  }
-
-  function agregarItemDia(key) {
-    diasData[key].items.push({ nombre: 'Nuevo platillo', precio: '$0', activo: true });
-    renderDiaItems(key);
-    actualizarTodo();
-    initDragAndDrop();
-  }
-
-  function eliminarDiaItem(key, idx) {
-    if (diasData[key].items.length <= 1) {
-      alert('Debe haber al menos un platillo por día.');
-      return;
-    }
-    diasData[key].items.splice(idx, 1);
-    renderDiaItems(key);
-    actualizarTodo();
-  }
-
-  function toggleDiaItem(key, idx) {
-    diasData[key].items[idx].activo = !diasData[key].items[idx].activo;
-    actualizarTodo();
-  }
-
-  function updateDiaItem(key, idx, field, val) {
-    diasData[key].items[idx][field] = val;
-    actualizarTodo();
-  }
-
-  // ===== GUISADOS CONTROLES =====
-  function renderGuisados() {
-    const container = document.getElementById('guisados-container');
-    container.innerHTML = '';
-    guisadosData.forEach((g, idx) => {
-      const row = document.createElement('div');
-      row.className = 'item-row';
-      row.style.cursor = 'default';
-      row.id = `guisado-${g.key}`;
-      if (!diasActivos[g.key]) {
-        row.style.display = 'none';
-      }
-      row.innerHTML = `
-        <span style="font-weight:600; font-size:13px; min-width:70px; color:#444;">${g.dia}</span>
-        <input type="text" value="${g.value}" oninput="updateGuisado(${idx}, this.value)" style="flex:1;">
-      `;
-      container.appendChild(row);
-    });
-  }
-
-  function updateGuisado(idx, val) {
-    guisadosData[idx].value = val;
-    actualizarTodo();
-  }
-
-  // ===== DIARIAMENTE CONTROLES =====
-  function renderDiariamente() {
-    const container = document.getElementById('diariamente-container');
-    container.innerHTML = '';
-    
-    const itemsContainer = document.createElement('div');
-    itemsContainer.className = 'items-container';
-    itemsContainer.dataset.type = 'diario';
-    itemsContainer.dataset.key = 'diario';
-    itemsContainer.id = 'diario-items-container';
-    
-    diariamenteItems.forEach((item, idx) => {
-      const row = document.createElement('div');
-      row.className = 'item-row';
-      row.draggable = true;
-      row.innerHTML = `
-        <span class="drag-handle">⠿</span>
-        <div class="checkbox-wrap">
-          <input type="checkbox" ${item.activo ? 'checked' : ''} onchange="toggleDiario(${idx})">
-        </div>
-        <input type="text" value="${item.nombre}" oninput="updateDiario(${idx}, 'nombre', this.value)">
-        <input type="text" class="price-input" value="${item.precio}" oninput="updateDiario(${idx}, 'precio', this.value)">
-        <button class="btn-remove" onclick="eliminarDiario(${idx})">✕</button>
-      `;
-      itemsContainer.appendChild(row);
-    });
-    
-    container.appendChild(itemsContainer);
-    initDragAndDrop();
-  }
-
-  function toggleDiario(idx) {
-    diariamenteItems[idx].activo = !diariamenteItems[idx].activo;
-    actualizarTodo();
-  }
-
-  function updateDiario(idx, field, val) {
-    diariamenteItems[idx][field] = val;
-    actualizarTodo();
-  }
-
-  function eliminarDiario(idx) {
-    if (diariamenteItems.length <= 1) {
-      alert('Debe haber al menos un producto en "Diariamente".');
-      return;
-    }
-    diariamenteItems.splice(idx, 1);
-    renderDiariamente();
-    actualizarTodo();
-  }
-
-  function agregarItemDiario() {
-    diariamenteItems.push({ nombre: 'Nuevo producto', precio: '$10', activo: true });
-    renderDiariamente();
-    actualizarTodo();
-  }
-
-  // ===== RENDER CANVAS SEMANAL =====
-  function renderDayBlock(key) {
-    const dia = diasData[key];
-    const items = dia.items.filter(i => i.activo);
-    if (items.length === 0) return `<div class="menu-item" style="color:#aaa; font-style:italic;">Sin items</div>`;
-    return items.map(i => `
-      <div class="menu-item"><span>${i.nombre}</span><span class="dots"></span><span>${i.precio}</span></div>
-    `).join('');
-  }
-
-  function actualizarMenuSemanal() {
-    document.getElementById('out-linea1').innerText = document.getElementById('in-linea1').value;
-    const schoolName = getSchoolName();
-    document.getElementById('out-linea2').innerText = schoolName;
-
-    const diasKeys = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes'];
-    const renderContainer = document.getElementById('dias-render');
-    renderContainer.innerHTML = '';
-    diasKeys.forEach(key => {
-      if (!diasActivos[key]) return;
-      const dia = diasData[key];
-      const card = document.createElement('div');
-      card.className = `menu-card ${dia.cls}`;
-      card.innerHTML = `
-        <div class="card-title">${dia.label}</div>
-        <div class="menu-list">${renderDayBlock(key)}</div>
-      `;
-      renderContainer.appendChild(card);
-    });
-
-    const diarioContainer = document.getElementById('out-diariamente');
-    diarioContainer.innerHTML = '';
-    const activeDiario = diariamenteItems.filter(i => i.activo);
-    if (activeDiario.length === 0) {
-      diarioContainer.innerHTML = `<div class="menu-item" style="color:#aaa; font-style:italic;">Sin productos</div>`;
-    } else {
-      activeDiario.forEach(i => {
-        diarioContainer.innerHTML += `
-          <div class="menu-item"><span>${i.nombre}</span><span class="dots"></span><span>${i.precio}</span></div>
-        `;
-      });
-    }
-
-    const guisadosActivos = guisadosData.filter(g => diasActivos[g.key]);
-    document.getElementById('out-guisados').innerHTML = guisadosActivos.map(g => `
-      <div class="guisado-item"><span>${g.dia}</span><span class="dots"></span><span>${g.value}</span></div>
-    `).join('');
-
-    document.getElementById('out-footer-infantil').innerText = document.getElementById('in-footer-infantil').value;
-    document.getElementById('out-footer-maestros').innerText = document.getElementById('in-footer-maestros').value;
-  }
-
-  // ===== RENDER MENÚS POR DÍA =====
-  function renderMenusDia() {
-    const container = document.getElementById('day-menus-container');
-    container.innerHTML = '';
-    
-    const diasKeys = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes'];
-    const infantil = document.getElementById('in-footer-infantil').value;
-    const maestros = document.getElementById('in-footer-maestros').value;
-    
-    diasKeys.forEach(key => {
-      if (!diasActivos[key]) return;
-      
-      const dia = diasData[key];
-      const itemsActivos = dia.items.filter(i => i.activo);
-      const guisado = guisadosData.find(g => g.key === key);
-      
-      // Crear contenedor del día
-      const dayContainer = document.createElement('div');
-      dayContainer.className = 'day-menu-container';
-      dayContainer.id = `day-menu-${key}`;
-      
-      let html = `
-        <div class="day-menu-title">MENÚ ${dia.label}</div>
-        <ul class="day-menu-items">
-      `;
-      
-      // Items del día
-      itemsActivos.forEach(item => {
-        html += `
-          <li class="day-menu-item">
-            <span class="item-name">${item.nombre}</span>
-            <span class="item-price">${item.precio}</span>
-          </li>
-        `;
-      });
-      
-      html += `</ul>`;
-      
-      // Guisado del día
-      if (guisado) {
-        html += `
-          <div class="day-menu-guisado">
-            <span class="label">GUISADO DEL DIA</span>
-            <span class="value">${guisado.value}</span>
-          </div>
-        `;
-      }
-      
-      // Precios (porción infantil y maestros) - SIN diariamente
-      html += `
-        <div class="day-menu-precios">
-          <div class="precio-line infantil">${infantil}</div>
-          <div class="precio-line maestros">${maestros}</div>
-        </div>
-      `;
-      
-      dayContainer.innerHTML = html;
-      container.appendChild(dayContainer);
-      
-      // Botón de descarga FUERA del canvas
-      const btnWrapper = document.createElement('div');
-      btnWrapper.className = 'btn-wrapper';
-      
-      const btn = document.createElement('button');
-      btn.className = 'btn';
-      btn.textContent = `📥 Descargar Menú ${dia.label}`;
-      btn.onclick = function() {
-        descargarImagen(`day-menu-${key}`, `menu_${key}.png`);
-      };
-      
-      btnWrapper.appendChild(btn);
-      container.appendChild(btnWrapper);
-    });
-  }
-
-  // ===== RENDER DIARIAMENTE SOLO =====
-  function renderDiarioOnly() {
-    const container = document.getElementById('diario-only-items');
-    container.innerHTML = '';
-    
-    const activeDiario = diariamenteItems.filter(i => i.activo);
-    if (activeDiario.length === 0) {
-      container.innerHTML = `<div class="diario-only-item" style="color:#aaa; font-style:italic; text-align:center; border-bottom:none;">Sin productos</div>`;
-    } else {
-      activeDiario.forEach(item => {
-        const li = document.createElement('li');
-        li.className = 'diario-only-item';
-        li.innerHTML = `
-          <span>${item.nombre}</span>
-          <span class="price">${item.precio}</span>
-        `;
-        container.appendChild(li);
-      });
-    }
-  }
-
-  // ===== DESCARGA DE IMAGEN =====
-  function descargarImagen(elementId, fileName) {
-    const elemento = document.getElementById(elementId);
-    if (!elemento) return;
-    
-    html2canvas(elemento, { 
-      scale: 2, 
-      useCORS: true, 
-      backgroundColor: '#ffffff',
-      logging: false
-    }).then(canvas => {
-      const enlace = document.createElement('a');
-      enlace.download = fileName;
-      enlace.href = canvas.toDataURL('image/png');
-      enlace.click();
-    }).catch(err => {
-      console.error('Error al generar imagen:', err);
-      alert('Hubo un error al generar la imagen. Por favor intenta de nuevo.');
-    });
-  }
-
-  // ===== ACTUALIZAR TODO =====
-  function actualizarTodo() {
-    actualizarMenuSemanal();
-    renderMenusDia();
-    renderDiarioOnly();
-  }
-
-  // ===== INICIALIZACIÓN =====
-  initDates();
-  renderDias();
-  renderGuisados();
-  renderDiariamente();
-  actualizarTodo();
-</script>
+<script src="app.js"></script>
 </body>
 </html>
